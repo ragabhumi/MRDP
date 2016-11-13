@@ -13,6 +13,7 @@ Requirements
 
 Officially, MRDP requires Python version 2.7 and KASm installed on your computer.
 You can get KASm from <http://www.intermagnet.org/software/Kasm_1.09.zip>
+
 Python module requirements :
 - PyQt4
 - numpy
