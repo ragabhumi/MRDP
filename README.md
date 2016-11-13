@@ -1,8 +1,4 @@
-# MRDP
-
-===========================================
-MRDP: Monthly Report Data Processing
-===========================================
+# MRDP: Monthly Report Data Processing
 
 Overview
 ========
