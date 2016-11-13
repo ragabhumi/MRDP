@@ -11,6 +11,7 @@ import numpy as np
 import re
 import string
 import os
+from os.path import expanduser
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment, Font
@@ -43,6 +44,7 @@ def save_excel(IAGA_folder,IMFV_folder):
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
+    pathExcel = home = expanduser("~") + '\\data\\QuasiDefinitive\\Excel\\' + str(tahun1)
 
     x_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
     y_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
@@ -232,17 +234,17 @@ def save_excel(IAGA_folder,IMFV_folder):
                 elif (k_i[m+((index_kk)*8)]==1):
                     a_i[m+((index_kk)*8)]=3
                 elif (k_i[m+((index_kk)*8)]==2):
-                    a_i[m+((index_kk)*8)]=6	
+                    a_i[m+((index_kk)*8)]=7	
                 elif (k_i[m+((index_kk)*8)]==3):
-                    a_i[m+((index_kk)*8)]=12	
+                    a_i[m+((index_kk)*8)]=15	
                 elif (k_i[m+((index_kk)*8)]==4):
-                    a_i[m+((index_kk)*8)]=24	
+                    a_i[m+((index_kk)*8)]=27	
                 elif (k_i[m+((index_kk)*8)]==5):
-                    a_i[m+((index_kk)*8)]=40	
+                    a_i[m+((index_kk)*8)]=48	
                 elif (k_i[m+((index_kk)*8)]==6):
-                    a_i[m+((index_kk)*8)]=70
+                    a_i[m+((index_kk)*8)]=80
                 elif (k_i[m+((index_kk)*8)]==7):
-                    a_i[m+((index_kk)*8)]=120	    
+                    a_i[m+((index_kk)*8)]=140	    
                 elif (k_i[m+((index_kk)*8)]==8):
                     a_i[m+((index_kk)*8)]=200	    
                 elif (k_i[m+((index_kk)*8)]==9):
@@ -257,23 +259,21 @@ def save_excel(IAGA_folder,IMFV_folder):
         if sk[n]=='':
             status[n]=''
         else:
-            A_i[n] = sum(a_i[0+(n*8):8+(n*8)])/8
+            A_i[n] = sum(a_i[0+(n*8):8+(n*8)])
             if A_i<0:
                 status[n]=''
-            elif (A_i[n]>=0 and A_i[n]<=30):
-                status[n]='Hari Tenang'
-            elif (A_i[n]>30 and A_i[n]<=50):
-                status[n]='Badai Lemah'
-            elif (A_i[n]>50 and A_i[n]<=100):
-                status[n]='Badai Menengah'
-            elif (A_i[n]>100):
-                status[n]='Badai Kuat'
+            elif (A_i[n]>=0 and A_i[n]<=120):
+                status[n]='0'
+            elif (A_i[n]>120 and A_i[n]<=640):
+                status[n]='1'
+            elif (A_i[n]>640):
+                status[n]='2'
 
         
     #Output file format excel
     wb = Workbook()
-    make_sure_path_exist(pathIAGA)
-    fileout = pathIAGA + '\\' + string.upper(date1.strftime("%b%Y")) + '.xlsx'
+    make_sure_path_exist(pathExcel)
+    fileout = pathExcel + '\\' + string.upper(date1.strftime("%b%Y")) + '.xlsx'
 
     # KOMPONEN X
     ws1 = wb.active
