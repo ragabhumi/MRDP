@@ -1,0 +1,9 @@
+0.0.1 (05-nov-16)
+---------------
+First public release.
+
+
+0.0.2 (13-nov-16)
+---------------
+- Change output excel directory to C:\Users\USERNAME\data\QuasiDefinitive\Excel
+- Change characters of K-index to numbers
