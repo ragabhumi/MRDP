@@ -44,7 +44,7 @@ def save_excel(IAGA_folder,IMFV_folder):
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
-    pathExcel = home = expanduser("~") + '\\data\\QuasiDefinitive\\Excel\\' + str(tahun1)
+    pathExcel = expanduser("~") + '\\data\\QuasiDefinitive\\Excel\\' + str(tahun1)
 
     x_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
     y_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
