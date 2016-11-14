@@ -20,8 +20,8 @@ Python module requirements :
 - openpyxl
 
 
-Development and Instant running
+Instant running
 ===============================
 
-You can run MRDP from this directory by clicking MRDP.bat directly or by create desktop shortcut.
+You can run MRDP from this directory by clicking MRDP.bat directly or by creating desktop shortcut.
 
