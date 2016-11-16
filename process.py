@@ -26,10 +26,9 @@ def make_sure_path_exist(path):
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
-def save_excel(IAGA_folder,IMFV_folder):	
+def min2hour(filename):
+    global hari_bulan,x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean
     #Import data IAGA-2002   
-    pathIAGA = str(IAGA_folder)
-    pathIMFV = str(IMFV_folder)
     Bx = list(np.tile(np.nan,1440))
     By = list(np.tile(np.nan,1440))
     Bz = list(np.tile(np.nan,1440))
@@ -37,23 +36,85 @@ def save_excel(IAGA_folder,IMFV_folder):
     Bh = list(np.tile(np.nan,1440))
     Bd = list(np.tile(np.nan,1440))
     Bi = list(np.tile(np.nan,1440))
-    
-    first_data = os.path.basename(glob.glob(os.path.join(pathIAGA, '*.min'))[0])
+
+    x_mean=['AM' for x in range(24)]
+    y_mean=['AM' for x in range(24)] 
+    z_mean=['AM' for x in range(24)] 
+    f_mean=['AM' for x in range(24)]
+    h_mean=['AM' for x in range(24)] 
+    d_mean=['AM' for x in range(24)]
+    i_mean=['AM' for x in range(24)] 
+        
+    with open(filename) as f_lemi:
+        for num, line in enumerate(f_lemi, 1):
+            if 'DATE' in line:
+                skip_line = num
+    with open(filename) as f_lemi:
+        content = f_lemi.readlines()[skip_line:]
+        for i in range(0,len(content)):
+            data = re.split('\s+',content[i])
+            if data[3]!='99999.00':
+                Bh[i] = float(data[3])
+            else:
+                Bh[i] = np.nan
+            if data[4]!='99999.00':
+                Bd[i] = float(data[4])
+            else:
+                Bd[i] = np.nan
+            if data[5]!='99999.00':
+                Bz[i] = float(data[5])
+            else:
+                Bz[i] = np.nan
+            if data[6]!='99999.00':
+                Bf[i] = float(data[6])
+            else:
+                Bf[i] = np.nan
+            Bx[i] = Bh[i]*np.cos(np.deg2rad(Bd[i]/60))
+            By[i] = Bh[i]*np.sin(np.deg2rad(Bd[i]/60))
+            Bi[i] = np.rad2deg(np.arctan(Bz[i]/Bh[i]))
+        
+    #Hitung rata-rata satu jam
+    for k in range(0,24):
+        if np.count_nonzero(np.isnan(Bx[(0+(60*k)):((60+(60*k)))])) <= 6:
+            x_mean[k]='%5.0f' %np.nanmean(Bx[(0+(60*k)):((60+(60*k)))])
+        else:
+            x_mean[k]='AM'
+        if np.count_nonzero(np.isnan(By[(0+(60*k)):((60+(60*k)))])) <= 6:
+            y_mean[k]='%6.1f' %np.nanmean(By[(0+(60*k)):((60+(60*k)))])
+        else:
+            y_mean[k]='AM'
+        if np.count_nonzero(np.isnan(Bz[(0+(60*k)):((60+(60*k)))])) <= 6:
+            z_mean[k]='%5.0f' %np.nanmean(Bz[(0+(60*k)):((60+(60*k)))])
+        else:
+            z_mean[k]='AM'
+        if np.count_nonzero(np.isnan(Bf[(0+(60*k)):((60+(60*k)))])) <= 6:
+            f_mean[k]='%5.0f' %np.nanmean(Bf[(0+(60*k)):((60+(60*k)))])
+        else:
+            f_mean[k]='AM'
+        if np.count_nonzero(np.isnan(Bh[(0+(60*k)):((60+(60*k)))])) <= 6:
+            h_mean[k]='%5.0f' %np.nanmean(Bh[(0+(60*k)):((60+(60*k)))])
+        else:
+            h_mean[k]='AM'
+        if np.count_nonzero(np.isnan(Bd[(0+(60*k)):((60+(60*k)))])) <= 6:
+            d_mean[k]='%6.2f' %np.nanmean(Bd[(0+(60*k)):((60+(60*k)))])
+        else:
+            d_mean[k]='AM'
+        if np.count_nonzero(np.isnan(Bi[(0+(60*k)):((60+(60*k)))])) <= 6:
+            i_mean[k]='%6.2f' %np.nanmean(Bi[(0+(60*k)):((60+(60*k)))])
+        else:
+            i_mean[k]='AM'
+    return [x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean]
+
+
+def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IMFV_folder):
+    first_data = os.path.basename(glob.glob(os.path.join(str(IAGA_folder), '*.min'))[0])
     tahun1 = int(first_data[3:7])
     bulan1 = int(first_data[7:9])
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
     pathExcel = expanduser("~") + '\\data\\QuasiDefinitive\\Excel\\' + str(tahun1)
-
-    x_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    y_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    z_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    f_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    h_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    d_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-    i_mean=[['AM' for x in range(24)] for x in range(hari_bulan)] 
-             
+    
     x_mean_hour_month1=[np.nan for x in range(24)]
     y_mean_hour_month1=[np.nan for x in range(24)]
     z_mean_hour_month1=[np.nan for x in range(24)]
@@ -69,8 +130,7 @@ def save_excel(IAGA_folder,IMFV_folder):
     h_mean_hour_month=[np.nan for x in range(24)]
     d_mean_hour_month=[np.nan for x in range(24)]
     i_mean_hour_month=[np.nan for x in range(24)]
-
-             
+            
     x_mean_day=list(np.tile(np.nan,hari_bulan))
     y_mean_day=list(np.tile(np.nan,hari_bulan))
     z_mean_day=list(np.tile(np.nan,hari_bulan))
@@ -78,82 +138,14 @@ def save_excel(IAGA_folder,IMFV_folder):
     h_mean_day=list(np.tile(np.nan,hari_bulan))
     d_mean_day=list(np.tile(np.nan,hari_bulan))
     i_mean_day=list(np.tile(np.nan,hari_bulan))
-             
+    
+    pathIMFV = str(IMFV_folder)
     k_i = ['AM']*hari_bulan*8
     a_i = [-1]*hari_bulan*8
     sk = ['']*hari_bulan
     A_i = [-1]*hari_bulan
-    status = ['']*hari_bulan
-    m = 0
+    status = ['']*hari_bulan 
 
-    for filename in glob.glob(os.path.join(pathIAGA, '*.min')):
-        
-        try:
-            with open(filename) as f_lemi:
-                for num, line in enumerate(f_lemi, 1):
-                    if 'DATE' in line:
-                        skip_line = num
-            with open(filename) as f_lemi:
-                print os.path.basename(filename)
-                content = f_lemi.readlines()[skip_line:]
-                j = 0
-                for i in range(0,len(content)):
-                    data = re.split('\s+',content[i])
-                    if data[3]!='99999.00':
-                        Bh[i] = float(data[3])
-                    else:
-                        Bh[i] = np.nan
-                    if data[4]!='99999.00':
-                        Bd[i] = float(data[4])
-                    else:
-                        Bd[i] = np.nan
-                    if data[5]!='99999.00':
-                        Bz[i] = float(data[5])
-                    else:
-                        Bz[i] = np.nan
-                    if data[6]!='99999.00':
-                        Bf[i] = float(data[6])
-                    else:
-                        Bf[i] = np.nan
-                    Bx[i] = Bh[i]*np.cos(np.deg2rad(Bd[i]/60))
-                    By[i] = Bh[i]*np.sin(np.deg2rad(Bd[i]/60))
-                    Bi[i] = np.rad2deg(np.arctan(Bz[i]/Bh[i]))
-                    j = j + 1
-        except IOError:
-            continue
-        
-    #Hitung rata-rata satu jam
-        for k in range(0,24):
-            if np.count_nonzero(np.isnan(Bx[(0+(60*k)):((60+(60*k)))])) <= 6:
-                x_mean[m][k]='%5.0f' %np.nanmean(Bx[(0+(60*k)):((60+(60*k)))])
-            else:
-                x_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(By[(0+(60*k)):((60+(60*k)))])) <= 6:
-                y_mean[m][k]='%6.1f' %np.nanmean(By[(0+(60*k)):((60+(60*k)))])
-            else:
-                y_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(Bz[(0+(60*k)):((60+(60*k)))])) <= 6:
-                z_mean[m][k]='%5.0f' %np.nanmean(Bz[(0+(60*k)):((60+(60*k)))])
-            else:
-                z_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(Bf[(0+(60*k)):((60+(60*k)))])) <= 6:
-                f_mean[m][k]='%5.0f' %np.nanmean(Bf[(0+(60*k)):((60+(60*k)))])
-            else:
-                f_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(Bh[(0+(60*k)):((60+(60*k)))])) <= 6:
-                h_mean[m][k]='%5.0f' %np.nanmean(Bh[(0+(60*k)):((60+(60*k)))])
-            else:
-                h_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(Bd[(0+(60*k)):((60+(60*k)))])) <= 6:
-                d_mean[m][k]='%6.2f' %np.nanmean(Bd[(0+(60*k)):((60+(60*k)))])
-            else:
-                d_mean[m][k]='AM'
-            if np.count_nonzero(np.isnan(Bi[(0+(60*k)):((60+(60*k)))])) <= 6:
-                i_mean[m][k]='%6.2f' %np.nanmean(Bi[(0+(60*k)):((60+(60*k)))])
-            else:
-                i_mean[m][k]='AM'
-        m = m+1
-    
     # Hitung rata-rata per hari
     for n in range(0,hari_bulan):
         if 'AM' in x_mean[n]:
