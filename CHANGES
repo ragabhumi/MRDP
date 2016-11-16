@@ -7,3 +7,8 @@ First public release.
 ---------------
 - Change output excel directory to C:\Users\USERNAME\data\QuasiDefinitive\Excel
 - Change characters of K-index to numbers
+
+
+0.0.3 (16-nov-16)
+---------------
+- fix problem with progressbar
