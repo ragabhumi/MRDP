@@ -1,6 +1,6 @@
 0.0.1 (05-nov-16)
 ---------------
-First public release.
+- First public release
 
 
 0.0.2 (13-nov-16)
@@ -11,4 +11,9 @@ First public release.
 
 0.0.3 (16-nov-16)
 ---------------
-- fix problem with progressbar
+- Fix problem with progressbar
+
+
+0.0.4 (17-nov-16)
+---------------
+- Fix problem when used with uncomplete data

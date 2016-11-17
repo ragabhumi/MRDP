@@ -1,7 +1,7 @@
 import sys
 import os
 import glob
-import numpy as np
+from calendar import monthrange
 from os.path import expanduser
 from PyQt4 import QtCore, QtGui, uic
 from process import min2hour
@@ -49,13 +49,17 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.textEdit.ensureCursorVisible()
     def Execute(self):
         listfile = glob.glob(os.path.join(str(dirIAGA_), '*.min'))
-        x = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        y = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        z = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        f = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        h = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        d = [[np.nan for u in range(24)] for u in range(len(listfile))]
-        i = [[np.nan for u in range(24)] for u in range(len(listfile))]
+        first_data = os.path.basename(listfile[0])
+        tahun1 = int(first_data[3:7])
+        bulan1 = int(first_data[7:9])
+        hari_bulan = monthrange(tahun1, bulan1)[1]
+        x = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        y = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        z = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        f = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        h = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        d = [['AM' for u in range(24)] for u in range(hari_bulan)]
+        i = [['AM' for u in range(24)] for u in range(hari_bulan)]
         value = self.progressBar.value()
         self.progressBar.setMaximum(len(listfile))
         self.labelfolder_3.setText('Creating excel file, please wait...')
