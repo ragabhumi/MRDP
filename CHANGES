@@ -17,3 +17,8 @@
 0.0.4 (17-nov-16)
 ---------------
 - Fix problem when used with uncomplete data
+
+
+0.0.5 (20-nov-16)
+---------------
+- Existing geomagnetic storm will not be replaced after executing program

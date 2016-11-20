@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 06 20:57:44 2016
-
 @author: YOSI
 """
 
@@ -11,8 +10,10 @@ import numpy as np
 import re
 import string
 import os
+import os.path
 from os.path import expanduser
 from openpyxl import Workbook
+from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment, Font
 from openpyxl.styles.borders import Border, Side
@@ -477,13 +478,34 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws8.title = "K"
     
     # GEOMAGNETIC STORM
-    ws9 = wb.create_sheet()
+    if os.path.isfile(fileout) == True:
+        # Read from existing excel file to temp.xlsx
+        read_from = load_workbook(fileout)
+        read_sheet = read_from.get_sheet_by_name('geomag storm')
+        wbt = Workbook()
+        wst = wbt.create_sheet('geomag storm')
+        for i in range(7,26):
+            for j in range(1,15):
+                wst.cell(row=i,column=j,value=read_sheet.cell(row=i,column=j).value)
+        wbt.save(pathExcel + '\\' + 'temp.xlsx')
+        
+        # Read from temp.xlsx and write back to existing excel file
+        ws9 = wb.create_sheet('geomag storm')
+        for i in range(1,19):
+            for j in range(1,15):
+                ws9.cell(row=i,column=j,value=wst.cell(row=i,column=j).value)       
+    else:            
+        ws9 = wb.create_sheet()
+        
     ws9.merge_cells('A1:O1');ws9.merge_cells('A2:E2');ws9.merge_cells('L2:O2')
     ws9.merge_cells('J3:O3');ws9.merge_cells('A4:C4');ws9.merge_cells('E4:G4')
     ws9.merge_cells('H4:I4');ws9.merge_cells('J4:L4');ws9.merge_cells('M4:N4')
     ws9.merge_cells('O4:O5');
     ws9['A1'] = 'PRINCIPAL MAGNETIC STORM'
     ws9['A1'].alignment = Alignment(horizontal="center")
+    for i in range(6,26):
+        for j in range(1,15):
+            ws9.cell(row=i, column=j).alignment = Alignment(horizontal="center")
     ws9['A2'] = 'Tuntungan Magnetic Observatory';ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
     ws9['A4'] = 'UT Begin'; ws9['D4'] = 'Type'; ws9['E4'] = 'Amplitude'; ws9['H4'] = 'Max. 3 hr Kindices'
     ws9['J4'] = 'Ranges'; ws9['M4'] = 'UT End'; ws9['O4'] = 'Remark'
@@ -756,4 +778,5 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
             
     wb.save(filename = fileout)
     os.remove(pathIMFV + '\\data.dka')
+    os.remove(pathExcel + '\\temp.xlsx')
     print '%s has been created' %(fileout)
