@@ -535,8 +535,8 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
         ws1.cell(column=s+2,row=37,value=('%s' %x_mean_hour_month[s]))        
         ws2.cell(column=s+2,row=37,value=('%s' %y_mean_hour_month[s]))
         ws3.cell(column=s+2,row=37,value=('%s' %z_mean_hour_month[s]))
-        ws4.cell(column=s+2,row=37,value=('%s' %f_mean_hour_month[s]))
-        ws5.cell(column=s+2,row=37,value=('%s' %h_mean_hour_month[s]))
+        ws4.cell(column=s+2,row=37,value=('%s' %h_mean_hour_month[s]))
+        ws5.cell(column=s+2,row=37,value=('%s' %f_mean_hour_month[s]))
         ws6.cell(column=s+2,row=37,value=('%s' %d_mean_hour_month[s]))
         ws7.cell(column=s+2,row=37,value=('%s' %i_mean_hour_month[s]))
 
@@ -544,8 +544,8 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws1['Z37'] = x_month
     ws2['Z37'] = y_month
     ws3['Z37'] = z_month
-    ws4['Z37'] = f_month
-    ws5['Z37'] = h_month
+    ws4['Z37'] = h_month
+    ws5['Z37'] = f_month
     ws6['Z37'] = d_month
     ws7['Z37'] = i_month
 
