@@ -18,6 +18,7 @@ Python module requirements :
 - PyQt4
 - numpy
 - openpyxl
+- Matplotlib
 
 
 Instant running

@@ -12,6 +12,7 @@ import string
 import os
 import os.path
 from os.path import expanduser
+from openpyxl.drawing.image import Image
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -20,6 +21,7 @@ from openpyxl.styles.borders import Border, Side
 import errno
 import glob
 from calendar import monthrange
+from plot_sinyal import plot_sinyal
 
 def make_sure_path_exist(path):
     try:
@@ -776,7 +778,38 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
         for q in range(2,4):
             ws9.cell(column=p,row=q).alignment = Alignment(horizontal="right",vertical="center")
             
+    "Create sheet for sinyal plot"        
+    plot_sinyal(IAGA_folder,IMFV_folder)
+    ws10 = wb.create_sheet()
+    ws10.title = "Signal"
+    img = Image('sinyal.png')
+    img.anchor(ws10.cell(column=1,row=1))
+    ws10.add_image(img)            
     wb.save(filename = fileout)
-    os.remove(pathIMFV + '\\data.dka')
+    
+    "Create sheet for Monthly K Index"
+    ws11 = wb.create_sheet()
+    ws11.title = "K Monthly"
+    img = Image('k_index.png')
+    img.anchor(ws11.cell(column=1,row=1))
+    ws11.add_image(img)            
+    wb.save(filename = fileout)
+    
+    "Create sheet for Weekly K Index"
+    ws12 = wb.create_sheet()
+    ws12.title = "K Weekly"
+    for i in range(0,len(glob.glob(os.path.join(str('../MRDP'), '*.png')))-2):
+        img = Image('%s.png'%i)
+        img.anchor(ws12.cell(column=1,row=i*46+1))
+        ws12.add_image(img)
+    wb.save(filename = fileout)
+    
+    "Remove unnecessary file"
+    for i in range(0,len(glob.glob(os.path.join(str('../MRDP'), '*.png')))-2):
+        os.remove('%s.png'%i)   
+    os.remove('sinyal.png')
+    os.remove('k_index.png')
     os.remove(pathExcel + '\\temp.xlsx')
+    os.remove(str(pathIMFV) + '\\data.dka')
+    
     print '%s has been created' %(fileout)

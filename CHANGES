@@ -22,3 +22,8 @@
 0.0.5 (20-nov-16)
 ---------------
 - Existing geomagnetic storm will not be replaced after executing program
+
+
+1.0.0 (25-nov-16)
+---------------
+- Add signal and K Index plotting
