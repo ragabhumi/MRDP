@@ -19,6 +19,7 @@ Python module requirements :
 - numpy
 - openpyxl
 - Matplotlib
+- Pillow
 
 
 Instant running
