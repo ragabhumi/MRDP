@@ -24,6 +24,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.SearchButtonIAGA.clicked.connect(self.SearchFolderIAGA)
         self.SearchButtonIMFV.clicked.connect(self.SearchFolderIMFV)
+        self.SearchButtonExcel.clicked.connect(self.SearchFolderExcel)
         self.ExecuteButton.clicked.connect(self.Execute)
         self.progressBar.setMinimum(0)
         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
@@ -41,6 +42,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         dirIMFV_ = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', home+'\\data', QtGui.QFileDialog.ShowDirsOnly)
         self.labelfolderIMFV.setText(dirIMFV_)
         return dirIMFV_
+    def SearchFolderExcel(self):
+        global dirExcel_
+        dirExcel_ = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', home+'\\data', QtGui.QFileDialog.ShowDirsOnly)
+        self.labelfolderExcel.setText(dirExcel_)
+        return dirExcel_
     def normalOutputWritten(self, text):
         cursor = self.textEdit.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
@@ -75,7 +81,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             print os.path.basename(glob.glob(os.path.join(str(dirIAGA_), '*.min'))[j])
             value = j+1
             self.progressBar.setValue(value)        
-        format_excel(x,y,z,f,h,d,i,dirIAGA_,dirIMFV_)
+        format_excel(x,y,z,f,h,d,i,dirIAGA_,dirIMFV_,dirExcel_)
         self.labelfolder_3.setText('Done')
             
 if __name__ == "__main__":
