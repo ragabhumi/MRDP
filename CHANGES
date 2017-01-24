@@ -27,3 +27,7 @@
 1.0.0 (25-nov-16)
 ---------------
 - Add signal and K Index plotting
+
+1.0.1 (25-jan-17)
+---------------
+- Add select excel output folder button
