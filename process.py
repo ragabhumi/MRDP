@@ -72,9 +72,18 @@ def min2hour(filename):
                 Bf[i] = float(data[6])
             else:
                 Bf[i] = np.nan
-            Bx[i] = Bh[i]*np.cos(np.deg2rad(Bd[i]/60))
-            By[i] = Bh[i]*np.sin(np.deg2rad(Bd[i]/60))
-            Bi[i] = np.rad2deg(np.arctan(Bz[i]/Bh[i]))
+            if Bh[i] == np.nan or Bd[i] == np.nan:
+                Bx[i] = np.nan
+            else:
+                Bx[i] = Bh[i]*np.cos(np.deg2rad(Bd[i]/60))
+            if Bh[i] == np.nan or Bd[i] == np.nan:
+                By[i] = np.nan
+            else:
+                By[i] = Bh[i]*np.sin(np.deg2rad(Bd[i]/60))
+            if Bh[i] == np.nan or Bz[i] == np.nan:
+                Bi[i] = np.nan
+            else:
+                Bi[i] = np.rad2deg(np.arctan(Bz[i]/Bh[i]))
         
     #Hitung rata-rata satu jam
     for k in range(0,24):
@@ -109,14 +118,14 @@ def min2hour(filename):
     return [x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean]
 
 
-def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IMFV_folder):
+def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IMFV_folder,Excel_folder):
     first_data = os.path.basename(glob.glob(os.path.join(str(IAGA_folder), '*.min'))[0])
     tahun1 = int(first_data[3:7])
     bulan1 = int(first_data[7:9])
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
-    pathExcel = expanduser("~") + '\\data\\QuasiDefinitive\\Excel\\' + str(tahun1)
+    pathExcel = str(Excel_folder)
     
     x_mean_hour_month1=[np.nan for x in range(24)]
     y_mean_hour_month1=[np.nan for x in range(24)]
@@ -159,23 +168,23 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
             y_mean_day[n] = ''
         else:
             y_mean_day[n] = '%6.1f' %np.mean([float(i) for i in y_mean[n]])
-        if 'AM' in x_mean[n]:
+        if 'AM' in z_mean[n]:
             z_mean_day[n] = ''
         else:
             z_mean_day[n] = '%5.0f' %np.mean([float(i) for i in z_mean[n]])
-        if 'AM' in x_mean[n]:
+        if 'AM' in f_mean[n]:
             f_mean_day[n] = ''
         else:
             f_mean_day[n] = '%5.0f' %np.mean([float(i) for i in f_mean[n]])
-        if 'AM' in x_mean[n]:
+        if 'AM' in h_mean[n]:
             h_mean_day[n] = ''
         else:
             h_mean_day[n] = '%5.0f' %np.mean([float(i) for i in h_mean[n]])
-        if 'AM' in x_mean[n]:
+        if 'AM' in d_mean[n]:
             d_mean_day[n] = ''
         else:
             d_mean_day[n] = '%6.2f' %np.mean([float(i) for i in d_mean[n]])
-        if 'AM' in x_mean[n]:
+        if 'AM' in i_mean[n]:
             i_mean_day[n] = ''
         else:
             i_mean_day[n] = '%6.2f' %np.mean([float(i) for i in i_mean[n]])
