@@ -4,7 +4,7 @@ Overview
 ========
 
 MRDP is a program to create routine geomagnetic monthly report at geomagnetic observatory.
-It reads IAGA-2002 and IMFV1.22 geomagnetic data format and write the report in Microsoft
+It reads IAGA-2002 geomagnetic data format and write the report in Microsoft
 Excel format.
 
 

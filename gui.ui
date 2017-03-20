@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Monthly Report Data Processing version 1.0.1 - 25 Jan 2017</string>
+   <string>Monthly Report Data Processing version 1.1.0 - 20 Mar 2017</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -54,7 +54,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>261</y>
+      <y>150</y>
       <width>120</width>
       <height>40</height>
      </rect>
@@ -103,7 +103,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Stasiun Geofisika Tuntungan - 2016</string>
+     <string>Stasiun Geofisika Tuntungan - 2017</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -113,7 +113,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>390</y>
+      <y>430</y>
       <width>311</width>
       <height>16</height>
      </rect>
@@ -126,7 +126,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>321</y>
+      <y>220</y>
       <width>121</width>
       <height>40</height>
      </rect>
@@ -139,7 +139,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>390</y>
+      <y>430</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -167,89 +167,11 @@
       <x>200</x>
       <y>82</y>
       <width>301</width>
-      <height>281</height>
+      <height>321</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="SearchButtonIMFV">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>141</y>
-      <width>121</width>
-      <height>40</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Search Folder IMFV</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelfolder_4">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>410</y>
-      <width>151</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Processing IMFV 1.22 data in  :</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelfolderIMFV">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>410</y>
-      <width>311</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="SearchButtonExcel">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>201</y>
-      <width>121</width>
-      <height>40</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Excel Output Folder</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelfolderExcel">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>440</y>
-      <width>311</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelfolder_5">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>440</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Output Excel folder                  :</string>
     </property>
    </widget>
   </widget>

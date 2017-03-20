@@ -28,6 +28,12 @@
 ---------------
 - Add signal and K Index plotting
 
+
 1.0.1 (25-jan-17)
 ---------------
 - Add select excel output folder button
+
+
+1.1.0 (20-mar-17)
+---------------
+- Change input, only reads IAGA-2002 files now

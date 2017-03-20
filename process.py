@@ -20,6 +20,7 @@ from openpyxl.styles import Alignment, Font
 from openpyxl.styles.borders import Border, Side
 import errno
 import glob
+import calendar
 from calendar import monthrange
 from plot_sinyal import plot_sinyal
 
@@ -29,6 +30,111 @@ def make_sure_path_exist(path):
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
+
+def iaga2imfv(filename,IAGA_folder):
+    global stacode,staname
+    make_sure_path_exist(str(IAGA_folder) + '/IMFV')
+    Bz = list(np.tile(np.nan,1440))
+    Bf = list(np.tile(np.nan,1440))
+    Bh = list(np.tile(np.nan,1440))
+    Bd = list(np.tile(np.nan,1440))
+    Hodd=np.zeros(30)
+    Dodd=np.zeros(30)
+    Zodd=np.zeros(30)
+    Fodd=np.zeros(30)
+    Heven=np.zeros(30)
+    Deven=np.zeros(30)
+    Zeven=np.zeros(30)
+    Feven=np.zeros(30)
+
+    with open(filename) as f_iaga:
+        for num, line in enumerate(f_iaga, 1):
+            if 'DATE' in line:
+                skip_line = num
+    with open(filename) as f_iaga:
+        sta1 = re.split('\s+',f_iaga.readlines()[3:4][0])
+        stacode = sta1[3]
+    with open(filename) as f_iaga:
+        staname1 = re.split('\s+',f_iaga.readlines()[2:3][0])
+        staname = staname1[3]
+    with open(filename) as f_iaga:
+        data1 = re.split('\s+',f_iaga.readlines()[11:12][0])
+        datatype = data1[3]
+    with open(filename) as f_iaga:
+        long1 = re.split('\s+',f_iaga.readlines()[5:6][0])
+        long = '%04.0f' %(float(long1[3])*10)
+    with open(filename) as f_iaga:
+        colat1 = re.split('\s+',f_iaga.readlines()[4:5][0])
+        colat = '%04.0f' %((90-float(colat1[3]))*10)
+    with open(filename) as f_iaga:
+        content = f_iaga.readlines()[skip_line:]
+        for i in range(0,len(content)):
+            data = re.split('\s+',content[i])
+            tahun = data[0][2:4]
+            bulan = string.upper(calendar.month_abbr[int(data[0][5:7])])
+            tanggal = data[0][8:10]
+            doy = data[2]
+            Bh[i] = float(data[3])
+            Bd[i] = float(data[4])
+            Bz[i] = float(data[5])
+            Bf[i] = float(data[6])
+
+    if datatype == 'Definitive' :
+        tipe = 'D'
+    elif datatype == 'Quasi-definitive' :
+        tipe = 'Q'
+    elif datatype == 'Provisional' :
+        tipe = 'P'
+    elif datatype == 'Variation' :
+        tipe = 'V'
+    else:
+        tipe = 'R'
+    # File output
+    fileout = str(IAGA_folder) + '\\IMFV\\' + bulan + tanggal + tahun + '.' + string.lower(stacode)
+    f_imfv = open(fileout, 'w')
+    a = 0
+    for i in range(0,1440,60):
+        head = '%s %s %s %02.0f HDZF %s GIN %s%s 215471 RRRRRRRRRRRRRRRR\n' %(stacode,bulan + tanggal + tahun,doy,a,tipe,colat,long)
+        a=a+1
+        f_imfv.write(head)
+        b=0
+        for q in range(0,60,2):
+            if Bh[q+i] == 99999:
+                Hodd[b] = 9999999
+            else:
+                Hodd[b]=Bh[q+i]*10
+            if Bd[q+i] == 99999:
+                Dodd[b] = 9999999
+            else:
+                Dodd[b]=Bd[q+i]*100
+            if Bz[q+i] == 99999:
+                Zodd[b] = 9999999
+            else:
+                Zodd[b]=Bz[q+i]*10
+            if Bf[q+i] == 99999:
+                Fodd[b] = 999999
+            else:
+                Fodd[b]=Bf[q+i]*10
+            if Bh[q+i+1] == 99999:
+                Heven[b] = 9999999
+            else:
+                Heven[b]=Bh[q+i+1]*10
+            if Bd[q+i+1] == 99999:
+                Deven[b] = 9999999
+            else:
+                Deven[b]=Bd[q+i+1]*100
+            if Bz[q+i+1] == 99999:
+                Zeven[b] = 9999999
+            else:
+                Zeven[b] = Bz[q+i+1]*10
+            if Bf[q+i+1] == 99999:
+                Feven[b] = 999999
+            else:
+                Feven[b] = Bf[q+i+1]*10
+            f_imfv.write('%07.0f %07.0f %07.0f %06.0f %s %07.0f %07.0f %07.0f %06.0f\n' %(Hodd[b],Dodd[b],Zodd[b],Fodd[b],'',Heven[b],Deven[b],Zeven[b],Feven[b]))
+            b=b+1
+    f_imfv.close()
+
 def min2hour(filename):
     global hari_bulan,x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean
     #Import data IAGA-2002   
@@ -118,14 +224,13 @@ def min2hour(filename):
     return [x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean]
 
 
-def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IMFV_folder,Excel_folder):
+def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     first_data = os.path.basename(glob.glob(os.path.join(str(IAGA_folder), '*.min'))[0])
     tahun1 = int(first_data[3:7])
     bulan1 = int(first_data[7:9])
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
-    pathExcel = str(Excel_folder)
     
     x_mean_hour_month1=[np.nan for x in range(24)]
     y_mean_hour_month1=[np.nan for x in range(24)]
@@ -151,7 +256,8 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     d_mean_day=list(np.tile(np.nan,hari_bulan))
     i_mean_day=list(np.tile(np.nan,hari_bulan))
     
-    pathIMFV = str(IMFV_folder)
+    pathIMFV = str(IAGA_folder) + '\\IMFV'
+    pathExcel = str(IAGA_folder)
     k_i = ['AM']*hari_bulan*8
     a_i = [-1]*hari_bulan*8
     sk = ['']*hari_bulan
@@ -217,7 +323,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     i_month = '%6.2f' %(sum([float(i) for i in i_mean_hour_month])/24)
     
     #Hitung K-Index sebulan
-    os.system('kasm TUN:01%s:%2.0f 300 xy %s\\data %s\\' % (string.upper(date1.strftime("%b%Y")),hari_bulan,pathIMFV,pathIMFV))
+    os.system('kasm %s:01%s:%2.0f 300 xy "%s"\\data "%s"\\' % (string.upper(stacode),string.upper(date1.strftime("%b%Y")),hari_bulan,pathIMFV,pathIMFV))
 
     #Proses pemilahan data
     with open(pathIMFV + '\\data.dka') as f:
@@ -293,7 +399,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws1.merge_cells('Z4:Z5')
     ws1['A2'] = 'Hourly Mean Values of X in nT From Digital Magnet'
     ws1['A2'].alignment = Alignment(horizontal="center")
-    ws1['A3'] = 'Tuntungan Magnetic Observatory'
+    ws1['A3'] = '%s Magnetic Observatory' %staname
     ws1['A4'] = 'Hour'
     ws1['A5'] = 'Day'
     ws1['Y3'] = date1.strftime("%B %Y")
@@ -320,7 +426,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws2.merge_cells('Z4:Z5')
     ws2['A2'] = 'Hourly Mean Values of Y in nT From Digital Magnet'
     ws2['A2'].alignment = Alignment(horizontal="center")
-    ws2['A3'] = 'Tuntungan Magnetic Observatory'
+    ws2['A3'] = '%s Magnetic Observatory' %staname
     ws2['A4'] = 'Hour'
     ws2['A5'] = 'Day'
     ws2['Y3'] = date1.strftime("%B %Y")
@@ -347,7 +453,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws3.merge_cells('Z4:Z5')
     ws3['A2'] = 'Hourly Mean Values of Z in nT From Digital Magnet'
     ws3['A2'].alignment = Alignment(horizontal="center")
-    ws3['A3'] = 'Tuntungan Magnetic Observatory'
+    ws3['A3'] = '%s Magnetic Observatory' %staname
     ws3['A4'] = 'Hour'
     ws3['A5'] = 'Day'
     ws3['Y3'] = date1.strftime("%B %Y")
@@ -374,7 +480,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws4.merge_cells('Z4:Z5')
     ws4['A2'] = 'Hourly Mean Values of H in nT From Digital Magnet'
     ws4['A2'].alignment = Alignment(horizontal="center")
-    ws4['A3'] = 'Tuntungan Magnetic Observatory'
+    ws4['A3'] = '%s Magnetic Observatory' %staname
     ws4['A4'] = 'Hour'
     ws4['A5'] = 'Day'
     ws4['Y3'] = date1.strftime("%B %Y")
@@ -401,7 +507,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws5.merge_cells('Z4:Z5')
     ws5['A2'] = 'Hourly Mean Values of F in nT From Digital Magnet'
     ws5['A2'].alignment = Alignment(horizontal="center")
-    ws5['A3'] = 'Tuntungan Magnetic Observatory'
+    ws5['A3'] = '%s Magnetic Observatory' %staname
     ws5['A4'] = 'Hour'
     ws5['A5'] = 'Day'
     ws5['Y3'] = date1.strftime("%B %Y")
@@ -428,7 +534,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws6.merge_cells('Z4:Z5')
     ws6['A2'] = 'Hourly Mean Values of D in arcMin From Digital Magnet'
     ws6['A2'].alignment = Alignment(horizontal="center")
-    ws6['A3'] = 'Tuntungan Magnetic Observatory'
+    ws6['A3'] = '%s Magnetic Observatory' %staname
     ws6['A4'] = 'Hour'
     ws6['A5'] = 'Day'
     ws6['Y3'] = date1.strftime("%B %Y")
@@ -455,7 +561,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws7.merge_cells('Z4:Z5')
     ws7['A2'] = 'Hourly Mean Values of I in Degree From Digital Magnet'
     ws7['A2'].alignment = Alignment(horizontal="center")
-    ws7['A3'] = 'Tuntungan Magnetic Observatory'
+    ws7['A3'] = '%s Magnetic Observatory' %staname
     ws7['A4'] = 'Hour'
     ws7['A5'] = 'Day'
     ws7['Y3'] = date1.strftime("%B %Y")
@@ -477,7 +583,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     ws8.merge_cells('J10:J11');ws8.merge_cells('K10:K11')
     ws8['A1'] = 'M A G N E T I C  A C T I V I T Y'
     ws8['A1'].alignment = Alignment(horizontal="center")
-    ws8['A4'] = 'Observatory';ws8['C4'] = ': Tuntungan  - %s  %s'%(string.upper(date1.strftime("%B")),tahun1)
+    ws8['A4'] = 'Observatory';ws8['C4'] = ': %s  - %s  %s'%(staname,string.upper(date1.strftime("%B")),tahun1)
     ws8['A5'] = 'Geog. Latitude'; ws8['C5'] = ': 03 30 01.4 N'; ws8['E5'] = 'Geom. Latitude'
     ws8['I5'] = 'Type of instr  : LEMI-018'
     ws8['A6'] = 'Geog. Long.';ws8['C6'] = ': 98 33 51.6 E';ws8['E6'] = 'Geom. Longitute'
@@ -517,7 +623,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
     for i in range(6,26):
         for j in range(1,15):
             ws9.cell(row=i, column=j).alignment = Alignment(horizontal="center")
-    ws9['A2'] = 'Tuntungan Magnetic Observatory';ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
+    ws9['A2'] = '%s Magnetic Observatory' %staname;ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
     ws9['A4'] = 'UT Begin'; ws9['D4'] = 'Type'; ws9['E4'] = 'Amplitude'; ws9['H4'] = 'Max. 3 hr Kindices'
     ws9['J4'] = 'Ranges'; ws9['M4'] = 'UT End'; ws9['O4'] = 'Remark'
     ws9['A5'] = 'dd';ws9['B5'] = 'hh';ws9['C5'] = 'mm'
@@ -788,7 +894,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
             ws9.cell(column=p,row=q).alignment = Alignment(horizontal="right",vertical="center")
             
     "Create sheet for sinyal plot"        
-    plot_sinyal(IAGA_folder,IMFV_folder)
+    plot_sinyal(IAGA_folder)
     ws10 = wb.create_sheet()
     ws10.title = "Signal"
     img = Image('sinyal.png')
@@ -818,7 +924,8 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder,IM
         os.remove('%s.png'%i)   
     os.remove('sinyal.png')
     os.remove('k_index.png')
-    os.remove(pathExcel + '\\temp.xlsx')
+    if os.path.isfile(pathExcel + '\\temp.xlsx') == True:
+        os.remove(pathExcel + '\\temp.xlsx')
     os.remove(str(pathIMFV) + '\\data.dka')
     
-    print '%s has been created' %(fileout)
+    print '%s has created' %(fileout)

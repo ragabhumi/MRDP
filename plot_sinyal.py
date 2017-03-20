@@ -104,7 +104,8 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     plt.savefig(str(figname)+'.png',dpi=150)
     plt.close()
 
-def plot_sinyal(pathIAGA,pathIMFV):
+def plot_sinyal(pathIAGA):
+    pathIMFV = pathIAGA + '\\IMFV'
     Bx = list(np.tile(np.nan,31*1440))
     By = list(np.tile(np.nan,31*1440))
     Bz = list(np.tile(np.nan,31*1440))

@@ -4,8 +4,7 @@ import glob
 from calendar import monthrange
 from os.path import expanduser
 from PyQt4 import QtCore, QtGui, uic
-from process import min2hour
-from process import format_excel
+from process import iaga2imfv,min2hour,format_excel
 
 home = expanduser("~")
 qtCreatorFile = "gui.ui" # Enter file here.
@@ -23,8 +22,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.SearchButtonIAGA.clicked.connect(self.SearchFolderIAGA)
-        self.SearchButtonIMFV.clicked.connect(self.SearchFolderIMFV)
-        self.SearchButtonExcel.clicked.connect(self.SearchFolderExcel)
         self.ExecuteButton.clicked.connect(self.Execute)
         self.progressBar.setMinimum(0)
         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
@@ -37,16 +34,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.labelfolderIAGA.setText(dirIAGA_)
         numfile = len([name for name in os.listdir(str(dirIAGA_)) if name.endswith('.min') and os.path.isfile(os.path.join(str(dirIAGA_), name))])
         return dirIAGA_,numfile
-    def SearchFolderIMFV(self):
-        global dirIMFV_
-        dirIMFV_ = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', home+'\\data', QtGui.QFileDialog.ShowDirsOnly)
-        self.labelfolderIMFV.setText(dirIMFV_)
-        return dirIMFV_
-    def SearchFolderExcel(self):
-        global dirExcel_
-        dirExcel_ = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', home+'\\data', QtGui.QFileDialog.ShowDirsOnly)
-        self.labelfolderExcel.setText(dirExcel_)
-        return dirExcel_
     def normalOutputWritten(self, text):
         cursor = self.textEdit.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
@@ -78,10 +65,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             h[j] = data[4]
             d[j] = data[5]
             i[j] = data[6]
+            iaga2imfv(listfile[j],dirIAGA_)
             print os.path.basename(glob.glob(os.path.join(str(dirIAGA_), '*.min'))[j])
             value = j+1
             self.progressBar.setValue(value)        
-        format_excel(x,y,z,f,h,d,i,dirIAGA_,dirIMFV_,dirExcel_)
+        format_excel(x,y,z,f,h,d,i,dirIAGA_)
         self.labelfolder_3.setText('Done')
             
 if __name__ == "__main__":
