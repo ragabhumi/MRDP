@@ -105,6 +105,12 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     plt.close()
 
 def plot_sinyal(pathIAGA):
+    with open('station.ini') as f_init:
+        content_init = f_init.readlines()
+        datasta = list(np.tile(np.nan,len(content_init)))		
+        for i in range(0,len(content_init)):
+            datasta[i] = re.split('\=|\n',content_init[i])
+
     pathIMFV = pathIAGA + '\\IMFV'
     first_data = os.path.basename(glob.glob(os.path.join(str(pathIAGA), '*.min'))[0])
     tahun1 = int(first_data[3:7])
@@ -235,7 +241,7 @@ def plot_sinyal(pathIAGA):
 
     "PLOT F"
     ax4 = plt.subplot(414, sharex=ax1)
-    ax4.text(0,-0.5,'Stasiun Geofisika Tuntungan', fontsize=8, fontweight='bold',ha='left', va='bottom', transform=ax4.transAxes)
+    ax4.text(0,-0.5,datasta[0][1], fontsize=8, fontweight='bold',ha='left', va='bottom', transform=ax4.transAxes)
     ax4.text(1,-0.5,'[Created at %s]' %now.strftime('%Y-%m-%d %H:%M UT'), fontsize=8, fontweight='bold',ha='right', va='bottom', transform=ax4.transAxes)
     plt.plot(t, Bf, linewidth=0.3, color='k')
     plt.setp(ax4.get_xticklabels(), fontsize=8)

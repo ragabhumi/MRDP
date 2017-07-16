@@ -153,7 +153,7 @@ def min2hour(filename):
     h_mean=['AM' for x in range(24)] 
     d_mean=['AM' for x in range(24)]
     i_mean=['AM' for x in range(24)] 
-        
+
     with open(filename) as f_lemi:
         for num, line in enumerate(f_lemi, 1):
             if 'DATE' in line:
@@ -226,6 +226,12 @@ def min2hour(filename):
 
 
 def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
+    with open('station.ini') as f_init:
+        content_init = f_init.readlines()
+        datasta = list(np.tile(np.nan,len(content_init)))		
+        for i in range(0,len(content_init)):
+            datasta[i] = re.split('\=|\n',content_init[i])
+			
     first_data = os.path.basename(glob.glob(os.path.join(str(IAGA_folder), '*.min'))[0])
     tahun1 = int(first_data[3:7])
     bulan1 = int(first_data[7:9])
@@ -324,7 +330,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     i_month = '%6.2f' %(sum([float(i) for i in i_mean_hour_month])/24)
     
     #Hitung K-Index sebulan
-    os.system('kasm %s:01%s:%2.0f 300 xy "%s"\\data "%s"\\' % (string.upper(stacode),string.upper(date1.strftime("%b%Y")),hari_bulan,pathIMFV,pathIMFV))
+    os.system('kasm %s:01%s:%2.0f %i xy "%s"\\data "%s"\\' % (string.upper(stacode),string.upper(date1.strftime("%b%Y")),hari_bulan,int(datasta[7][1]),pathIMFV,pathIMFV))
 
     #Proses pemilahan data
     with open(pathIMFV + '\\data.dka') as f:
@@ -400,7 +406,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws1.merge_cells('Z4:Z5')
     ws1['A2'] = 'Hourly Mean Values of X in nT From Digital Magnet'
     ws1['A2'].alignment = Alignment(horizontal="center")
-    ws1['A3'] = '%s Magnetic Observatory' %staname
+    ws1['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws1['A4'] = 'Hour'
     ws1['A5'] = 'Day'
     ws1['Y3'] = date1.strftime("%B %Y")
@@ -427,7 +433,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws2.merge_cells('Z4:Z5')
     ws2['A2'] = 'Hourly Mean Values of Y in nT From Digital Magnet'
     ws2['A2'].alignment = Alignment(horizontal="center")
-    ws2['A3'] = '%s Magnetic Observatory' %staname
+    ws2['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws2['A4'] = 'Hour'
     ws2['A5'] = 'Day'
     ws2['Y3'] = date1.strftime("%B %Y")
@@ -454,7 +460,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws3.merge_cells('Z4:Z5')
     ws3['A2'] = 'Hourly Mean Values of Z in nT From Digital Magnet'
     ws3['A2'].alignment = Alignment(horizontal="center")
-    ws3['A3'] = '%s Magnetic Observatory' %staname
+    ws3['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws3['A4'] = 'Hour'
     ws3['A5'] = 'Day'
     ws3['Y3'] = date1.strftime("%B %Y")
@@ -481,7 +487,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws4.merge_cells('Z4:Z5')
     ws4['A2'] = 'Hourly Mean Values of H in nT From Digital Magnet'
     ws4['A2'].alignment = Alignment(horizontal="center")
-    ws4['A3'] = '%s Magnetic Observatory' %staname
+    ws4['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws4['A4'] = 'Hour'
     ws4['A5'] = 'Day'
     ws4['Y3'] = date1.strftime("%B %Y")
@@ -508,7 +514,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws5.merge_cells('Z4:Z5')
     ws5['A2'] = 'Hourly Mean Values of F in nT From Digital Magnet'
     ws5['A2'].alignment = Alignment(horizontal="center")
-    ws5['A3'] = '%s Magnetic Observatory' %staname
+    ws5['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws5['A4'] = 'Hour'
     ws5['A5'] = 'Day'
     ws5['Y3'] = date1.strftime("%B %Y")
@@ -535,7 +541,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws6.merge_cells('Z4:Z5')
     ws6['A2'] = 'Hourly Mean Values of D in arcMin From Digital Magnet'
     ws6['A2'].alignment = Alignment(horizontal="center")
-    ws6['A3'] = '%s Magnetic Observatory' %staname
+    ws6['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws6['A4'] = 'Hour'
     ws6['A5'] = 'Day'
     ws6['Y3'] = date1.strftime("%B %Y")
@@ -562,7 +568,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws7.merge_cells('Z4:Z5')
     ws7['A2'] = 'Hourly Mean Values of I in Degree From Digital Magnet'
     ws7['A2'].alignment = Alignment(horizontal="center")
-    ws7['A3'] = '%s Magnetic Observatory' %staname
+    ws7['A3'] = '%s Magnetic Observatory' %datasta[1][1]
     ws7['A4'] = 'Hour'
     ws7['A5'] = 'Day'
     ws7['Y3'] = date1.strftime("%B %Y")
@@ -584,12 +590,12 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws8.merge_cells('J10:J11');ws8.merge_cells('K10:K11')
     ws8['A1'] = 'M A G N E T I C  A C T I V I T Y'
     ws8['A1'].alignment = Alignment(horizontal="center")
-    ws8['A4'] = 'Observatory';ws8['C4'] = ': %s  - %s  %s'%(staname,string.upper(date1.strftime("%B")),tahun1)
-    ws8['A5'] = 'Geog. Latitude'; ws8['C5'] = ': 03 30 01.4 N'; ws8['E5'] = 'Geom. Latitude'
-    ws8['I5'] = 'Type of instr  : LEMI-018'
-    ws8['A6'] = 'Geog. Long.';ws8['C6'] = ': 98 33 51.6 E';ws8['E6'] = 'Geom. Longitute'
+    ws8['A4'] = 'Observatory';ws8['C4'] = ': %s  - %s  %s'%(datasta[1][1],string.upper(date1.strftime("%B")),tahun1)
+    ws8['A5'] = 'Geog. Latitude'; ws8['C5'] = ': %s'%datasta[3][1]; ws8['E5'] = 'Geom. Latitude'
+    ws8['I5'] = 'Type of instr  : %s' %datasta[6][1]
+    ws8['A6'] = 'Geog. Long.';ws8['C6'] = ': %s'%datasta[4][1];ws8['E6'] = 'Geom. Longitute'
     ws8['A8'] = 'K - Indices for three hours interval'
-    ws8['A9'] = 'K - 9 = 300 gammas'
+    ws8['A9'] = 'K - 9 = %s gammas'%datasta[7][1]
     ws8['A10'] = 'DATE';ws8['B10'] = '00-03';ws8['C10'] = '03-06';ws8['D10'] = '06-09'
     ws8['E10'] = '09-12';ws8['F10'] = '12-15';ws8['G10'] = '15-18';ws8['H10'] = '18-21'
     ws8['I10'] = '21-24';ws8['J10'] = 'SUM';ws8['K10'] = 'CHARACTER'
@@ -624,7 +630,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     for i in range(6,26):
         for j in range(1,15):
             ws9.cell(row=i, column=j).alignment = Alignment(horizontal="center")
-    ws9['A2'] = '%s Magnetic Observatory' %staname;ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
+    ws9['A2'] = '%s Magnetic Observatory' %datasta[1][1];ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
     ws9['A4'] = 'UT Begin'; ws9['D4'] = 'Type'; ws9['E4'] = 'Amplitude'; ws9['H4'] = 'Max. 3 hr Kindices'
     ws9['J4'] = 'Ranges'; ws9['M4'] = 'UT End'; ws9['O4'] = 'Remark'
     ws9['A5'] = 'dd';ws9['B5'] = 'hh';ws9['C5'] = 'mm'

@@ -26,4 +26,5 @@ Instant running
 ===============================
 
 You can run MRDP from this directory by clicking MRDP.bat directly or by creating desktop shortcut.
+Adjust station.ini to change station parameters. 
 

@@ -41,3 +41,7 @@
 1.1.1 (16-jul-17)
 ---------------
 - Fix data loss handling problem
+
+1.1.2 (16-jul-17)
+---------------
+- Add station parameters as initiation file
