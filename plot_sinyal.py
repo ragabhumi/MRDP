@@ -106,56 +106,56 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
 
 def plot_sinyal(pathIAGA):
     pathIMFV = pathIAGA + '\\IMFV'
-    Bx = list(np.tile(np.nan,31*1440))
-    By = list(np.tile(np.nan,31*1440))
-    Bz = list(np.tile(np.nan,31*1440))
-    Bf = list(np.tile(np.nan,31*1440))
-    Bh = list(np.tile(np.nan,31*1440))
-    Bd = list(np.tile(np.nan,31*1440))
-    Bi = list(np.tile(np.nan,31*1440))
     first_data = os.path.basename(glob.glob(os.path.join(str(pathIAGA), '*.min'))[0])
     tahun1 = int(first_data[3:7])
     bulan1 = int(first_data[7:9])
     tanggal1 = 1
     date1 = datetime(year=tahun1,month=bulan1,day=tanggal1)
     hari_bulan = monthrange(tahun1, bulan1)[1]
+    Bx = list(np.tile(np.nan,hari_bulan*1440))
+    By = list(np.tile(np.nan,hari_bulan*1440))
+    Bz = list(np.tile(np.nan,hari_bulan*1440))
+    Bf = list(np.tile(np.nan,hari_bulan*1440))
+    Bh = list(np.tile(np.nan,hari_bulan*1440))
+    Bd = list(np.tile(np.nan,hari_bulan*1440))
+    Bi = list(np.tile(np.nan,hari_bulan*1440))
     k_i = [-1]*(hari_bulan+7)*8
     a_i = [-1]*(hari_bulan+7)*8
     sk = ['']*(hari_bulan+7)
     A_i = [-1]*(hari_bulan+7)
-    p = 0
 
     "READ IAGA DATA"
     for filename in glob.glob(os.path.join(str(pathIAGA), '*.min')):
-        with open(filename) as f_lemi:
-            content = f_lemi.readlines()
+        with open(filename) as f_iaga:
+            content = f_iaga.readlines()
             for num, line in enumerate(content, 1):
                 if 'DATE' in line:
                     skip_line = num
-        with open(filename) as f_lemi:
-            content = f_lemi.readlines()[skip_line:]
+        with open(filename) as f_iaga:
+            content = f_iaga.readlines()[skip_line:]
             for i in range(0,len(content)):
                 data = re.split('\s+',content[i])
+                tanggal = datetime.strptime(data[0], '%Y-%m-%d')
+                tanggal_data = tanggal.day-1
                 if data[3]!='99999.00':
-                    Bh[i+(1440*p)] = float(data[3])
+                    Bh[i+(1440*tanggal_data)] = float(data[3])
                 else:
-                    Bh[i+(1440*p)] = np.nan
+                    Bh[i+(1440*tanggal_data)] = np.nan
                 if data[4]!='99999.00':
-                    Bd[i+(1440*p)] = float(data[4])
+                    Bd[i+(1440*tanggal_data)] = float(data[4])
                 else:
-                    Bd[i+(1440*p)] = np.nan
+                    Bd[i+(1440*tanggal_data)] = np.nan
                 if data[5]!='99999.00':
-                    Bz[i+(1440*p)] = float(data[5])
+                    Bz[i+(1440*tanggal_data)] = float(data[5])
                 else:
-                    Bz[i+(1440*p)] = np.nan
+                    Bz[i+(1440*tanggal_data)] = np.nan
                 if data[6]!='99999.00':
-                    Bf[i+(1440*p)] = float(data[6])
+                    Bf[i+(1440*tanggal_data)] = float(data[6])
                 else:
-                    Bf[i+(1440*p)] = np.nan
-                Bx[i+(1440*p)] = Bh[i+(1440*p)]*np.cos(np.deg2rad(Bd[i+(1440*p)]/60))
-                By[i+(1440*p)] = Bh[i+(1440*p)]*np.sin(np.deg2rad(Bd[i+(1440*p)]/60))
-                Bi[i+(1440*p)] = np.rad2deg(np.arctan(Bz[i+(1440*p)]/Bh[i+(1440*p)]))
-        p = p+1
+                    Bf[i+(1440*tanggal_data)] = np.nan
+                Bx[i+(1440*tanggal_data)] = Bh[i+(1440*tanggal_data)]*np.cos(np.deg2rad(Bd[i+(1440*tanggal_data)]/60))
+                By[i+(1440*tanggal_data)] = Bh[i+(1440*tanggal_data)]*np.sin(np.deg2rad(Bd[i+(1440*tanggal_data)]/60))
+                Bi[i+(1440*tanggal_data)] = np.rad2deg(np.arctan(Bz[i+(1440*tanggal_data)]/Bh[i+(1440*tanggal_data)]))
     
     "READ K INDEX"
     with open(pathIMFV + '\\data.dka') as f:
@@ -196,7 +196,7 @@ def plot_sinyal(pathIAGA):
         for n in range(0,hari_bulan):
             A_i[n] = sum(a_i[0+(n*8):8+(n*8)])/8
 
-    t=np.arange(0,31,1/1440.0)
+    t=np.arange(0,hari_bulan,1/1440.0)
     kelas=4
     now=datetime.utcnow()
     plt.rcParams['axes.linewidth'] = 0.3

@@ -58,13 +58,14 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.labelfolder_3.setText('Creating excel file, please wait...')
         for j in range(0,len(listfile)):
             data = min2hour(listfile[j])
-            x[j] = data[0]
-            y[j] = data[1]
-            z[j] = data[2]
-            f[j] = data[3]
-            h[j] = data[4]
-            d[j] = data[5]
-            i[j] = data[6]
+            tanggal = data[7]-1
+            x[tanggal] = data[0]
+            y[tanggal] = data[1]
+            z[tanggal] = data[2]
+            f[tanggal] = data[3]
+            h[tanggal] = data[4]
+            d[tanggal] = data[5]
+            i[tanggal] = data[6]
             iaga2imfv(listfile[j],dirIAGA_)
             print os.path.basename(glob.glob(os.path.join(str(dirIAGA_), '*.min'))[j])
             value = j+1

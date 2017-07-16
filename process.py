@@ -162,6 +162,7 @@ def min2hour(filename):
         content = f_lemi.readlines()[skip_line:]
         for i in range(0,len(content)):
             data = re.split('\s+',content[i])
+            tanggal_data = datetime.strptime(data[0], '%Y-%m-%d')
             if data[3]!='99999.00':
                 Bh[i] = float(data[3])
             else:
@@ -221,7 +222,7 @@ def min2hour(filename):
             i_mean[k]='%6.2f' %np.nanmean(Bi[(0+(60*k)):((60+(60*k)))])
         else:
             i_mean[k]='AM'
-    return [x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean]
+    return [x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,tanggal_data.day]
 
 
 def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
