@@ -5,7 +5,7 @@ Overview
 
 MRDP is a program to create routine geomagnetic monthly report at geomagnetic observatory.
 It reads IAGA-2002 geomagnetic data format and write the report in Microsoft
-Excel format.
+Excel format. It is also can be used to remove step in magnetogram.
 
 
 Requirements
@@ -16,10 +16,13 @@ You can get KASm from <http://www.intermagnet.org/software/Kasm_1.09.zip>
 
 Python module requirements :
 - PyQt4
-- numpy
-- openpyxl
+- Numpy
+- Openpyxl
 - Matplotlib
 - Pillow
+- Scipy
+- Pandas
+- Lxml
 
 
 Instant running

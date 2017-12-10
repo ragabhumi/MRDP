@@ -5,16 +5,16 @@ Created on Sun Nov 20 21:44:51 2016
 @author: YOSI
 """
 import numpy as np
-import glob
-import os
-import re
-import time
+import glob, os, re, time
 from calendar import monthrange
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import matplotlib.patches as mpatches
 import matplotlib.dates as mdates
+import pandas as pd
+import xml.etree.ElementTree
+import lxml.etree
 
 def plot_K(figname,start_date,length_date,k_i,A_i):
     cs=[]
@@ -32,10 +32,10 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     "Plot K Index"        
     tt=['' for x in range(length_date*8)]
     for i in range(0,length_date*8):
-        tt[i]=start_date+timedelta(hours=i*3)
+        tt[i]=start_date+timedelta(hours=i*3)+timedelta(hours=1.5)
     ax5 = plt.subplot(211)
     plt.xlim(start_date,start_date+timedelta(days=length_date))
-    plt.setp(ax5.xaxis.set_minor_locator(MultipleLocator(1)))
+    plt.setp(ax5.xaxis.set_minor_locator(mdates.DayLocator()))
     plt.setp(ax5.xaxis.set_major_formatter(mdates.DateFormatter('%d %b')))
     plt.setp(ax5.get_xticklabels(), fontsize=8)
     plt.ylim(-1,9)
@@ -45,8 +45,8 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     ax5.set_title(str.upper(start_date.strftime('%B %Y')), fontsize=12, fontweight='bold', color='r')
     plt.grid(b=True, which='major', color='c', linestyle='-', linewidth=0.1)
     plt.grid(b=True, which='minor', color='c', linestyle='-', linewidth=0.1)
-    plt.bar(tt,k_i,0.12,color=cs,linewidth=0.2)
- 
+    plt.bar(tt,k_i,0.12,color=cs,linewidth=0.2,edgecolor='gold')
+    
     "Plot K Legend"
     box = ax5.get_position()
     ax5.set_position([box.x0, box.y0, box.width * 0.8, box.height])
@@ -54,31 +54,33 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     purple_patch = mpatches.Patch(color='purple', label='K = 7 - 9')
     red_patch = mpatches.Patch(color='red', label='K = 5 - 6')
     yellow_patch = mpatches.Patch(color='yellow', label='K = 4')
-    green_patch = mpatches.Patch(color='green', label='K = 1 - 3')
-    black_patch = mpatches.Patch(color='black', label='Lost data')
-    plt.legend(handles=[purple_patch,red_patch,yellow_patch,green_patch,black_patch],bbox_to_anchor=(1, 1.03), loc='upper left', ncol=1,fontsize=9,labelspacing=2.75,borderpad=0.8)
+    green_patch = mpatches.Patch(color='green', label='K = 0 - 3')
+    black_patch = mpatches.Patch(color='black', label='No data')
+    plt.legend(handles=[purple_patch,red_patch,yellow_patch,green_patch,black_patch],bbox_to_anchor=(1, 1.04), loc='upper left', ncol=1,fontsize=9,labelspacing=1.74,borderpad=0.8)
     
     "Plot A Index"
-    colormap = np.array(['g', 'yellow', 'r', 'purple', 'k'])
-    csa = np.array(np.tile(4,length_date))
+    colormap = np.array(['g', 'yellow', 'r', 'darkred', 'purple', 'k'])
+    csa = np.array(np.tile(5,length_date))
     for i in range(0,len(A_i)):
-        if A_i[i]>=0 and A_i[i]<=30:
+        if A_i[i]>=0 and A_i[i]<20:
             csa[i]=0
-        elif A_i[i]>30 and A_i[i]<=50:
+        elif A_i[i]>=20 and A_i[i]<30:
             csa[i]=1
-        elif A_i[i]>50 and A_i[i]<=100:
+        elif A_i[i]>=30 and A_i[i]<50:
             csa[i]=2
-        elif A_i[i]>100:
+        elif A_i[i]>=50 and A_i[i]<100:
             csa[i]=3
-        else:
+        elif A_i[i]>=100:
             csa[i]=4
+        else:
+            csa[i]=5
         
     ttt=['' for x in range(length_date)]
     for i in range(0,length_date):
         ttt[i]=start_date+timedelta(days=i)
     ax6 = plt.subplot(212)
-    plt.ylim(0,100)
-    plt.xlim(start_date,start_date+timedelta(days=length_date))
+    plt.ylim(-3,100)
+    plt.xlim(start_date-timedelta(hours=12),start_date+timedelta(days=length_date)-timedelta(hours=12))
     plt.setp(ax6.xaxis.set_minor_locator(MultipleLocator(1)))
     plt.xlabel("Date",weight='bold',fontsize=8)
     plt.setp(ax6.get_xticklabels(), fontsize=8)
@@ -95,15 +97,133 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     box = ax6.get_position()
     ax6.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     ax6.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    purple_patch = mpatches.Patch(color='purple', label='Great\nStorm')
-    red_patch = mpatches.Patch(color='red', label='Intermediate\nStorm')
-    yellow_patch = mpatches.Patch(color='yellow', label='Small\nStorm')
-    green_patch = mpatches.Patch(color='green', label='Relatively\nQuiet')
-    black_patch = mpatches.Patch(color='black', label='Lost data')
-    plt.legend(handles=[purple_patch,red_patch,yellow_patch,green_patch,black_patch],bbox_to_anchor=(1, 1.03), loc='upper left', ncol=1,fontsize=8,labelspacing=1.7,borderpad=0.8)
-    plt.savefig(str(figname)+'.png',dpi=150)
+    purple_patch = mpatches.Patch(color='purple', label='A >= 100')
+    darkred_patch = mpatches.Patch(color='darkred', label='A = 50 - 99')
+    red_patch = mpatches.Patch(color='red', label='A = 30 - 49')
+    yellow_patch = mpatches.Patch(color='yellow', label='A = 20 - 29')
+    green_patch = mpatches.Patch(color='green', label='A = 0 - 19')
+    black_patch = mpatches.Patch(color='black', label='No data')
+    plt.legend(handles=[purple_patch,darkred_patch,red_patch,yellow_patch,green_patch,black_patch],bbox_to_anchor=(1, 1.03), loc='upper left', ncol=1,fontsize=8,labelspacing=1.67,borderpad=0.8)
+    plt.savefig(str(figname)+'.png',dpi=150,bbox_inches='tight')
     plt.close()
 
+def plot_baseline(filebaseline,filexml,tahun):
+    def poly2latex(poly, variable="x", width=3):
+        t = ["{0:0.{width}f}"]
+        t.append(t[-1] + " {variable}")
+        t.append(t[-1] + "^{1}")
+    
+        def f():
+            for i, v in enumerate(reversed(poly)):
+                idx = i if i < 2 else 2
+                yield t[idx].format(v, i, variable=variable, width=width)
+    
+        return "${}$".format("+".join(f()))
+    
+    #Setting Figure properties
+    fig, axs = plt.subplots(3, 1, sharex=True)
+    fig.subplots_adjust(hspace=0)
+    fig.suptitle('Baseline Data for TUNTUNGAN %s' %tahun, fontsize=10, fontweight='bold', color='k')
+    xfmt = mdates.DateFormatter('%b')
+    font = {'color':  'black',
+            'size': 6,
+            'ha':'center',
+            'va': 'top'
+            }
+    
+    #Read baseline file
+    with open(filebaseline) as f_base:
+        content = f_base.readlines()
+        date = list(np.tile(np.nan,len(content)))
+        Hobs = list(np.tile(np.nan,len(content)))
+        Dobs = list(np.tile(np.nan,len(content)))
+        Zobs = list(np.tile(np.nan,len(content)))
+        for i in range(0,len(content)):
+            data = re.split('\s+',content[i])
+            date[i] = datetime.strptime(data[1]+' '+data[2], '%d-%b-%Y %H:%M:%S')
+            #Remove 99999.9 value
+            Hobs[i] = float(data[10]) if data[10] != '99999.9' else np.nan
+            Hobs[i] = Hobs[i] if content[i][129] == 'H' else np.nan
+            Dobs[i] = float(data[4]) if data[4] != '99999.9' else np.nan
+            Dobs[i] = Dobs[i] if content[i][130] == 'D' else np.nan
+            Zobs[i] = float(data[11]) if data[11] != '99999.9' else np.nan
+            Zobs[i] = Zobs[i] if content[i][131] == 'Z' else np.nan
+        #Create pandas dataframe from baseline file
+        abs_obs = pd.DataFrame({'dt':date,'H':Hobs,'D':Dobs,'Z':Zobs})
+        #Set date as index
+        abs_obs = abs_obs.set_index(['dt'])
+    
+    #Plot absolute observation data
+    axs[0].plot(date, Hobs, 'bs',markersize=3, marker='o', alpha=0.4)
+    axs[0].set_ylabel('H (nT)', fontsize=8)
+    axs[0].grid(b=True, which='major', color='c', linestyle=':', linewidth=0.5)
+    axs[0].tick_params(axis='both', which='major', labelsize=8)
+    
+    axs[1].plot(date, Dobs, 'bs',markersize=3,marker='o',alpha=0.4)
+    axs[1].set_ylabel('D (min)', fontsize=8)
+    axs[1].grid(b=True, which='major', color='c', linestyle=':', linewidth=0.5)
+    axs[1].tick_params(axis='both', which='major', labelsize=8)
+    
+    axs[2].plot(date, Zobs, 'bs',markersize=3,marker='o',alpha=0.4)
+    axs[2].grid(b=True, which='major', color='c', linestyle=':', linewidth=0.5)
+    axs[2].tick_params(axis='both', which='major', labelsize=8)
+    axs[2].set_ylabel('Z (nT)', fontsize=8)
+    axs[2].set_xlabel('Month', fontsize=8)
+    axs[2].xaxis.set_major_formatter(xfmt)
+    
+    #Read functions XML file
+    tree = xml.etree.ElementTree.parse(filexml)
+    root = tree.getroot()
+    #Count SD_entry, it must not read
+    doc = lxml.etree.parse(filexml)
+    S_count = int(doc.xpath('count(//SD_entry)'))
+    #Declare variables
+    component=list(np.tile(np.nan,len(root)-S_count))
+    start_date=list(np.tile(np.nan,len(root)-S_count))
+    end_date=list(np.tile(np.nan,len(root)-S_count))
+    dates=list(np.tile(np.nan,len(root)-S_count))
+    coefficient=list(np.tile(np.nan,len(root)-S_count))
+    
+    #Read each component, start_date,end_date, and coefficients
+    for k in range(0,len(root)-S_count):
+        component[k]=root[k][0].text
+        start_date[k]=datetime.strptime(root[k][1].text, '%d-%b-%Y %H:%M:%S')
+        end_date[k]=datetime.strptime(root[k][2].text, '%d-%b-%Y %H:%M:%S')
+        #Create date range from start_date to end_date
+        dates[k] = [start_date[k] + timedelta(days=x) for x in range(0, (end_date[k]-start_date[k]).days)]
+        #Declare coefficient variable
+        coefficient[k]=list(np.tile(np.nan,len(root[k])-3))
+        #Read each coefficient from each component and date range
+        for j in range(0,len(root[k])-3):
+            coefficient[k][j]=float(root[k][j+3].text)
+    
+        #Calculate mean of date range, used for whitening later
+        mu = mdates.date2num(dates[k]).mean()
+        #Read each component observed data inside date range
+        comp_value = abs_obs.loc[start_date[k]:end_date[k]][component[k]]
+        #Declare x and y data, x axis is whitened, used for calculating coefficients
+        x = mdates.date2num(comp_value.index.to_pydatetime())-mu
+        y = comp_value
+        #Clean NaN value
+        idx = np.isfinite(x) & np.isfinite(y)
+        #Calculate coefficients using polyfit, degree is len(root[k])-4
+        coeffs = np.polyfit(x[idx], y[idx],len(root[k])-4)
+        #Create polynomial function using coefficients
+        f = np.poly1d(coeffs)
+    
+        #Plot line from polynomial functions
+        if component[k]=='H':
+            axs[0].plot(mdates.date2num(dates[k]), f(mdates.date2num(dates[k])-mu), 'r-')
+            axs[0].text(mu, f((mdates.date2num(dates[k])-mu).mean()), poly2latex(coeffs), fontdict=font)
+        elif component[k]=='D':
+            axs[1].plot(mdates.date2num(dates[k]), f(mdates.date2num(dates[k])-mu), 'r-')
+            axs[1].text(mu, f((mdates.date2num(dates[k])-mu).mean()), poly2latex(coeffs), fontdict=font)
+        elif component[k]=='Z':
+            axs[2].plot(mdates.date2num(dates[k]), f(mdates.date2num(dates[k])-mu), 'r-')
+            axs[2].text(mu, f((mdates.date2num(dates[k])-mu).mean()), poly2latex(coeffs), fontdict=font)
+            
+    fig.savefig('baseline.png',dpi=150,bbox_inches='tight')
+    
 def plot_sinyal(pathIAGA):
     with open('station.ini') as f_init:
         content_init = f_init.readlines()
@@ -177,30 +297,34 @@ def plot_sinyal(pathIAGA):
             for m in range(0,8):
                 k_i[m+((index_kk)*8)] = int(data_k[m+2])
                 if (k_i[m+((index_kk)*8)]==0):
-                    a_i[m+((index_kk)*8)]=0
+                    a_i[m+((index_kk)*8)]=0.0
                 elif (k_i[m+((index_kk)*8)]==1):
-                    a_i[m+((index_kk)*8)]=3
+                    a_i[m+((index_kk)*8)]=3.0
                 elif (k_i[m+((index_kk)*8)]==2):
-                    a_i[m+((index_kk)*8)]=7	
+                    a_i[m+((index_kk)*8)]=7.0
                 elif (k_i[m+((index_kk)*8)]==3):
-                    a_i[m+((index_kk)*8)]=15	
+                    a_i[m+((index_kk)*8)]=15.0	
                 elif (k_i[m+((index_kk)*8)]==4):
-                    a_i[m+((index_kk)*8)]=27	
+                    a_i[m+((index_kk)*8)]=27.0	
                 elif (k_i[m+((index_kk)*8)]==5):
-                    a_i[m+((index_kk)*8)]=48	
+                    a_i[m+((index_kk)*8)]=48.0	
                 elif (k_i[m+((index_kk)*8)]==6):
-                    a_i[m+((index_kk)*8)]=80
+                    a_i[m+((index_kk)*8)]=80.0
                 elif (k_i[m+((index_kk)*8)]==7):
-                    a_i[m+((index_kk)*8)]=140	    
+                    a_i[m+((index_kk)*8)]=140.0	    
                 elif (k_i[m+((index_kk)*8)]==8):
                     a_i[m+((index_kk)*8)]=200	    
                 elif (k_i[m+((index_kk)*8)]==9):
-                    a_i[m+((index_kk)*8)]=300
+                    a_i[m+((index_kk)*8)]=300.0
                 elif (k_i[m+((index_kk)*8)]==-1):
                     a_i[m+((index_kk)*8)]=-1
-
+                    
         for n in range(0,hari_bulan):
-            A_i[n] = sum(a_i[0+(n*8):8+(n*8)])/8
+            a_i_array = np.array(a_i[0+(n*8):8+(n*8)])
+            if list(a_i_array).count(-1)>0:
+                A_i[n] = -1
+            else:
+                A_i[n] = a_i_array[a_i_array != -1].mean()
 
     t=np.arange(0,hari_bulan,1/1440.0)
     kelas=4
@@ -254,7 +378,7 @@ def plot_sinyal(pathIAGA):
     plt.grid(b=True, which='major', color='c', linestyle='-', linewidth=0.1)
     plt.grid(b=True, which='minor', color='c', linestyle='-', linewidth=0.1)
     plt.xlim(0,hari_bulan)
-    plt.savefig('sinyal.png',dpi=150)
+    plt.savefig('sinyal.png',dpi=150,bbox_inches='tight')
 
     "PLOT K INDEX"
     for i in range(0,int(np.ceil(monthrange(tahun1, bulan1)[1]/7.0))):

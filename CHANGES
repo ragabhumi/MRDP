@@ -2,37 +2,30 @@
 ---------------
 - First public release
 
-
 0.0.2 (13-nov-16)
 ---------------
 - Change output excel directory to C:\Users\USERNAME\data\QuasiDefinitive\Excel
 - Change characters of K-index to numbers
 
-
 0.0.3 (16-nov-16)
 ---------------
 - Fix problem with progressbar
-
 
 0.0.4 (17-nov-16)
 ---------------
 - Fix problem when used with uncomplete data
 
-
 0.0.5 (20-nov-16)
 ---------------
 - Existing geomagnetic storm will not be replaced after executing program
 
-
 1.0.0 (25-nov-16)
 ---------------
-- Add signal and K Index plotting
-
+- Add signal and K Index plot
 
 1.0.1 (25-jan-17)
 ---------------
 - Add select excel output folder button
-
 
 1.1.0 (20-mar-17)
 ---------------
@@ -45,3 +38,14 @@
 1.1.2 (16-jul-17)
 ---------------
 - Add station parameters as initiation file
+
+2.0.0 (5-dec-17)
+---------------
+- Add step removal processing
+- Fixed plot on K and A index
+
+2.1.0 (10-dec-17)
+---------------
+- Add baseline plot
+- Add splash screen
+- Fix clipped problem when creating plots

@@ -1,10 +1,9 @@
-import sys
-import os
-import glob
+import sys,os,glob,time
 from calendar import monthrange
 from os.path import expanduser
 from PyQt4 import QtCore, QtGui, uic
 from process import iaga2imfv,min2hour,format_excel
+from step_remove import step_removal
 
 home = expanduser("~")
 qtCreatorFile = "gui.ui" # Enter file here.
@@ -23,6 +22,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.SearchButtonIAGA.clicked.connect(self.SearchFolderIAGA)
         self.ExecuteButton.clicked.connect(self.Execute)
+        self.StepRemovalButton.clicked.connect(self.stepremoval)
+        self.CalendarWidget.clicked[QtCore.QDate].connect(self.showDate)
         self.progressBar.setMinimum(0)
         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
     def __del__(self):
@@ -72,10 +73,29 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             self.progressBar.setValue(value)        
         format_excel(x,y,z,f,h,d,i,dirIAGA_)
         self.labelfolder_3.setText('Done')
+    def stepremoval(self):
+        threshold = self.lineEdit.displayText()
+        date = self.CalendarWidget.selectedDate().toPyDate()
+        print 'Removing steps at '+date.strftime('%d %B %Y')
+        step_removal(date,float(threshold),'Z:\\PROCESS\\DATALEMIRAWFILTER\\',home+'\\data\\Provisional')
+    def showDate(self):     
+        date = self.CalendarWidget.selectedDate()
+        self.label.setText(str(date.toPyDate()))
             
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
+
+    # Create and display the splash screen
+    splash_pix = QtGui.QPixmap('splash.jpg')
+    splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    splash.setMask(splash_pix.mask())
+    splash.show()
+    app.processEvents()
+
+    # Simulate something that takes time
+    time.sleep(2)
+
     window = MyApp()
     window.show()
+    splash.finish(window)
     sys.exit(app.exec_())
-    

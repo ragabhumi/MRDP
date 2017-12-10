@@ -22,8 +22,9 @@ import errno
 import glob
 import calendar
 from calendar import monthrange
-from plot_sinyal import plot_sinyal
+from plot_sinyal import plot_sinyal, plot_baseline
 
+home = expanduser("~")
 def make_sure_path_exist(path):
     try:
         os.makedirs(path)
@@ -926,11 +927,23 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
         ws12.add_image(img)
     wb.save(filename = fileout)
     
+    "Create sheet for Baseline"
+    plot_baseline(home+'\\analysis\\qc\\absolute\\baselines\\gdas1\\'+str(tahun1)+'\\TUN_Baseline_%s.txt'%tahun1,
+                  home+'\\analysis\\qc\\absolute\\baselines\\gdas1\\'+str(tahun1)+'\\TUN_tun_Functions_%s.xml'%tahun1,
+                  tahun1)
+    ws13 = wb.create_sheet()
+    ws13.title = "Baseline"
+    img = Image('baseline.png')
+    img.anchor(ws13.cell(column=1,row=1))
+    ws13.add_image(img) 
+    wb.save(filename = fileout)
+    
     "Remove unnecessary file"
-    for i in range(0,len(glob.glob(os.path.join(str('../MRDP'), '*.png')))-2):
+    for i in range(0,len(glob.glob(os.path.join(str('../MRDP'), '*.png')))-3):
         os.remove('%s.png'%i)   
     os.remove('sinyal.png')
     os.remove('k_index.png')
+    os.remove('baseline.png')
     if os.path.isfile(pathExcel + '\\temp.xlsx') == True:
         os.remove(pathExcel + '\\temp.xlsx')
     os.remove(str(pathIMFV) + '\\data.dka')

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>559</height>
+    <width>538</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Monthly Report Data Processing version 1.1.2 - 16 Jul 2017</string>
+   <string>Monthly Report Data Processing version 2.1.0 - 10 Des 2017</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -25,7 +25,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>81</y>
+      <y>100</y>
       <width>121</width>
       <height>40</height>
      </rect>
@@ -37,9 +37,9 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>470</y>
-      <width>471</width>
+      <x>20</x>
+      <y>500</y>
+      <width>491</width>
       <height>23</height>
      </rect>
     </property>
@@ -63,7 +63,7 @@
      <string>Execute</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="label2">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -113,7 +113,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>430</y>
+      <y>474</y>
       <width>311</width>
       <height>16</height>
      </rect>
@@ -126,7 +126,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>220</y>
+      <y>200</y>
       <width>121</width>
       <height>40</height>
      </rect>
@@ -138,8 +138,8 @@
    <widget class="QLabel" name="labelfolder_2">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>430</y>
+      <x>20</x>
+      <y>474</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -151,8 +151,8 @@
    <widget class="QLabel" name="labelfolder_3">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>500</y>
+      <x>20</x>
+      <y>530</y>
       <width>471</width>
       <height>16</height>
      </rect>
@@ -165,22 +165,240 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>82</y>
+      <y>100</y>
       <width>301</width>
-      <height>321</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="StepRemovalButton">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>390</y>
+      <width>121</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Step Removal</string>
+    </property>
+   </widget>
+   <widget class="QCalendarWidget" name="CalendarWidget">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>280</y>
+      <width>301</width>
+      <height>155</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>261</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="gridVisible">
+     <bool>false</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QCalendarWidget::SingleSelection</enum>
+    </property>
+    <property name="horizontalHeaderFormat">
+     <enum>QCalendarWidget::ShortDayNames</enum>
+    </property>
+    <property name="navigationBarVisible">
+     <bool>true</bool>
+    </property>
+    <property name="dateEditEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>68</y>
+      <width>491</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>270</y>
+      <width>491</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
+    </property>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>113</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelfolder_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>111</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Threshold</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="labelfolder_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>580</y>
+      <width>261</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Copyright (c) 2017 Stasiun Geofisika Tuntungan</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelfolder_5">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Routine Processing</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelfolder_6">
+    <property name="geometry">
+     <rect>
+      <x>33</x>
+      <y>263</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Special Processing</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <zorder>frame</zorder>
+   <zorder>frame_2</zorder>
+   <zorder>SearchButtonIAGA</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>ExecuteButton</zorder>
+   <zorder>label2</zorder>
+   <zorder>label_2</zorder>
+   <zorder>labelfolderIAGA</zorder>
+   <zorder>CloseButton</zorder>
+   <zorder>labelfolder_2</zorder>
+   <zorder>labelfolder_3</zorder>
+   <zorder>textEdit</zorder>
+   <zorder>StepRemovalButton</zorder>
+   <zorder>CalendarWidget</zorder>
+   <zorder>labelfolder_4</zorder>
+   <zorder>labelfolder_5</zorder>
+   <zorder>labelfolder_6</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>537</width>
+     <width>538</width>
      <height>21</height>
     </rect>
    </property>
