@@ -49,3 +49,8 @@
 - Add baseline plot
 - Add splash screen
 - Fix clipped problem when creating plots
+
+2.2.0 (23-apr-20)
+---------------
+- Convert to Python 3
+- Convert from PyQt4 to PyQt5

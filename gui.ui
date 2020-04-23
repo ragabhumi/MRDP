@@ -10,6 +10,12 @@
     <height>640</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Monthly Report Data Processing version 2.1.0 - 10 Des 2017</string>
   </property>
@@ -103,7 +109,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Stasiun Geofisika Tuntungan - 2017</string>
+     <string>Stasiun Geofisika Deli Serdang - 2020</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -320,7 +326,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Copyright (c) 2017 Stasiun Geofisika Tuntungan</string>
+     <string>Copyright (c) 2020 Stasiun Geofisika Deli Serdang</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelfolder_5">
@@ -399,7 +405,7 @@
      <x>0</x>
      <y>0</y>
      <width>538</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

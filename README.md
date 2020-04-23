@@ -11,11 +11,12 @@ Excel format. It is also can be used to remove step in magnetogram.
 Requirements
 ===============================
 
-Officially, MRDP requires Python version 2.7 and KASm installed on your computer.
+Officially, MRDP requires Python version 3.7 and KASm installed on your computer.
+Works better using Anaconda.
 You can get KASm from <http://www.intermagnet.org/software/Kasm_1.09.zip>
 
 Python module requirements :
-- PyQt4
+- PyQt5
 - Numpy
 - Openpyxl
 - Matplotlib

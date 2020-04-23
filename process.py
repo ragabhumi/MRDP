@@ -34,7 +34,7 @@ def make_sure_path_exist(path):
 
 def iaga2imfv(filename,IAGA_folder):
     global stacode,staname
-    make_sure_path_exist(str(IAGA_folder) + '/IMFV')
+    make_sure_path_exist(str(IAGA_folder) + '\\IMFV')
     Bz = list(np.tile(np.nan,1440))
     Bf = list(np.tile(np.nan,1440))
     Bh = list(np.tile(np.nan,1440))
@@ -72,7 +72,7 @@ def iaga2imfv(filename,IAGA_folder):
         for i in range(0,len(content)):
             data = re.split('\s+',content[i])
             tahun = data[0][2:4]
-            bulan = string.upper(calendar.month_abbr[int(data[0][5:7])])
+            bulan = calendar.month_abbr[int(data[0][5:7])].upper()
             tanggal = data[0][8:10]
             doy = data[2]
             Bh[i] = float(data[3])
@@ -91,7 +91,7 @@ def iaga2imfv(filename,IAGA_folder):
     else:
         tipe = 'R'
     # File output
-    fileout = str(IAGA_folder) + '\\IMFV\\' + bulan + tanggal + tahun + '.' + string.lower(stacode)
+    fileout = str(IAGA_folder) + '\\IMFV\\' + bulan + tanggal + tahun + '.' + stacode.lower()
     f_imfv = open(fileout, 'w')
     a = 0
     for i in range(0,1440,60):
@@ -176,10 +176,6 @@ def min2hour(filename):
                 Bz[i] = float(data[5])
             else:
                 Bz[i] = np.nan
-            if data[6]!='99999.00':
-                Bf[i] = float(data[6])
-            else:
-                Bf[i] = np.nan
             if Bh[i] == np.nan or Bd[i] == np.nan:
                 Bx[i] = np.nan
             else:
@@ -192,7 +188,10 @@ def min2hour(filename):
                 Bi[i] = np.nan
             else:
                 Bi[i] = np.rad2deg(np.arctan(Bz[i]/Bh[i]))
-        
+            if Bx[i] == np.nan or By[i] == np.nan or Bz[i] == np.nan:
+                Bf[i] = np.nan
+            else:
+                Bf[i] = np.sqrt(Bx[i]**2+By[i]**2+Bz[i]**2)
     #Hitung rata-rata satu jam
     for k in range(0,24):
         if np.count_nonzero(np.isnan(Bx[(0+(60*k)):((60+(60*k)))])) <= 6:
@@ -331,7 +330,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     i_month = '%6.2f' %(sum([float(i) for i in i_mean_hour_month])/24)
     
     #Hitung K-Index sebulan
-    os.system('kasm %s:01%s:%2.0f %i xy "%s"\\data "%s"\\' % (string.upper(stacode),string.upper(date1.strftime("%b%Y")),hari_bulan,int(datasta[7][1]),pathIMFV,pathIMFV))
+    os.system('C:\\programs\\kasm %s:01%s:%2.0f %i xy "%s"\\data "%s"\\' % (stacode.upper(),date1.strftime("%b%Y").upper(),hari_bulan,int(datasta[7][1]),pathIMFV,pathIMFV))
 
     #Proses pemilahan data
     with open(pathIMFV + '\\data.dka') as f:
@@ -378,7 +377,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
             status[n]=''
         else:
             A_i[n] = sum(a_i[0+(n*8):8+(n*8)])
-            if A_i<0:
+            if A_i[n]<0:
                 status[n]=''
             elif (A_i[n]>=0 and A_i[n]<=120):
                 status[n]='0'
@@ -391,7 +390,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     #Output file format excel
     wb = Workbook()
     make_sure_path_exist(pathExcel)
-    fileout = pathExcel + '\\' + string.upper(date1.strftime("%b%Y")) + '.xlsx'
+    fileout = pathExcel + '\\' + date1.strftime("%b%Y").upper() + '.xlsx'
 
     # KOMPONEN X
     ws1 = wb.active
@@ -591,7 +590,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws8.merge_cells('J10:J11');ws8.merge_cells('K10:K11')
     ws8['A1'] = 'M A G N E T I C  A C T I V I T Y'
     ws8['A1'].alignment = Alignment(horizontal="center")
-    ws8['A4'] = 'Observatory';ws8['C4'] = ': %s  - %s  %s'%(datasta[1][1],string.upper(date1.strftime("%B")),tahun1)
+    ws8['A4'] = 'Observatory';ws8['C4'] = ': %s  - %s  %s'%(datasta[1][1],date1.strftime("%B").upper(),tahun1)
     ws8['A5'] = 'Geog. Latitude'; ws8['C5'] = ': %s'%datasta[3][1]; ws8['E5'] = 'Geom. Latitude'
     ws8['I5'] = 'Type of instr  : %s' %datasta[6][1]
     ws8['A6'] = 'Geog. Long.';ws8['C6'] = ': %s'%datasta[4][1];ws8['E6'] = 'Geom. Longitute'
@@ -631,7 +630,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     for i in range(6,26):
         for j in range(1,15):
             ws9.cell(row=i, column=j).alignment = Alignment(horizontal="center")
-    ws9['A2'] = '%s Magnetic Observatory' %datasta[1][1];ws9['L2'] = '%s  %s'%(string.upper(date1.strftime("%B")),tahun1);ws9['J3'] = 'UTC Time'
+    ws9['A2'] = '%s Magnetic Observatory' %datasta[1][1];ws9['L2'] = '%s  %s'%(date1.strftime("%B").upper(),tahun1);ws9['J3'] = 'UTC Time'
     ws9['A4'] = 'UT Begin'; ws9['D4'] = 'Type'; ws9['E4'] = 'Amplitude'; ws9['H4'] = 'Max. 3 hr Kindices'
     ws9['J4'] = 'Ranges'; ws9['M4'] = 'UT End'; ws9['O4'] = 'Remark'
     ws9['A5'] = 'dd';ws9['B5'] = 'hh';ws9['C5'] = 'mm'
@@ -906,7 +905,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws10 = wb.create_sheet()
     ws10.title = "Signal"
     img = Image('sinyal.png')
-    img.anchor(ws10.cell(column=1,row=1))
+    img.anchor = 'A1'
     ws10.add_image(img)            
     wb.save(filename = fileout)
     
@@ -914,7 +913,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws11 = wb.create_sheet()
     ws11.title = "K Monthly"
     img = Image('k_index.png')
-    img.anchor(ws11.cell(column=1,row=1))
+    img.anchor = 'A1'
     ws11.add_image(img)            
     wb.save(filename = fileout)
     
@@ -923,7 +922,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws12.title = "K Weekly"
     for i in range(0,len(glob.glob(os.path.join(str('../MRDP'), '*.png')))-2):
         img = Image('%s.png'%i)
-        img.anchor(ws12.cell(column=1,row=i*46+1))
+        img.anchor = 'A'+str(i*46+1)
         ws12.add_image(img)
     wb.save(filename = fileout)
     
@@ -934,7 +933,7 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
     ws13 = wb.create_sheet()
     ws13.title = "Baseline"
     img = Image('baseline.png')
-    img.anchor(ws13.cell(column=1,row=1))
+    img.anchor = 'A1'
     ws13.add_image(img) 
     wb.save(filename = fileout)
     
@@ -948,4 +947,4 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
         os.remove(pathExcel + '\\temp.xlsx')
     os.remove(str(pathIMFV) + '\\data.dka')
     
-    print '%s has created' %(fileout)
+    print('%s has created' %(fileout))

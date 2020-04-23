@@ -26,7 +26,7 @@ def step_removal_process(data,threshold,comp):
 
     if np.array(steps).size:
         breakpoints = [i for i,v in enumerate(np.diff(steps)) if v > 1]
-        print 'Number of ',comp,' breakpoints: '+str(len(breakpoints))
+        print('Number of ',comp,' breakpoints: '+str(len(breakpoints)))
 
         #Go through each break point and sum up the accumulated change
         breakpoints =  [-1]+breakpoints+[len(steps)-1]  # put a zero at the start for each of looping and the final point
@@ -108,7 +108,7 @@ def step_removal(date1,threshold,namefolderlemi,namefolder_out):
                 dates1[i] = list((data1[0]+'-'+data1[1]+'-'+data1[2]+' '+data1[3]+':'+data1[4]+':'+data1[5],Bx1,By1,Bz1))
             datadates1 = pd.DataFrame(dates1,columns=['dt', 'Bx', 'By', 'Bz'])
     except:
-        print 'File '+filename1+' not exist'
+        print('File '+filename1+' not exist')
         
     try:
         with open(namefolderlemi + '/' + filename2) as f_lemi2:
@@ -122,7 +122,7 @@ def step_removal(date1,threshold,namefolderlemi,namefolder_out):
                 dates2[i] = list((data2[0]+'-'+data2[1]+'-'+data2[2]+' '+data2[3]+':'+data2[4]+':'+data2[5],Bx2,By2,Bz2))
             datadates2 = pd.DataFrame(dates2,columns=['dt', 'Bx', 'By', 'Bz'])
     except:
-        print 'File '+filename2+' not exist'    
+        print('File '+filename2+' not exist'    )
     
     timefull = pd.date_range(date1-timedelta(days=1), periods=172800, freq='s')
     timeadd = pd.concat([datadates1,datadates2], ignore_index=True)
@@ -216,8 +216,8 @@ def step_removal(date1,threshold,namefolderlemi,namefolder_out):
         f_iaga.write(body_iaga)
     f_iaga.close()
     
-    print fileout+' has been created'
-    print 'Creating graphic, please wait...'
+    print(fileout+' has been created')
+    print('Creating graphic, please wait...')
 
     #PLOT GRAFIK
     t=pd.date_range(date1.strftime('%d-%B-%Y 00:00'),date1.strftime('%d-%B-%Y 23:59'),freq="1min")
@@ -279,4 +279,4 @@ def step_removal(date1,threshold,namefolderlemi,namefolder_out):
 	
     plt.show()
 
-    print 'Finish\n'
+    print('Finish\n')

@@ -34,9 +34,9 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     for i in range(0,length_date*8):
         tt[i]=start_date+timedelta(hours=i*3)+timedelta(hours=1.5)
     ax5 = plt.subplot(211)
-    plt.xlim(start_date,start_date+timedelta(days=length_date))
-    plt.setp(ax5.xaxis.set_minor_locator(mdates.DayLocator()))
-    plt.setp(ax5.xaxis.set_major_formatter(mdates.DateFormatter('%d %b')))
+    ax5.set_xlim(start_date,start_date+timedelta(days=length_date))
+    ax5.xaxis.set_minor_locator(mdates.DayLocator())
+    ax5.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
     plt.setp(ax5.get_xticklabels(), fontsize=8)
     plt.ylim(-1,9)
     plt.ylabel('K-Index',fontsize=8,weight='bold')
@@ -81,10 +81,10 @@ def plot_K(figname,start_date,length_date,k_i,A_i):
     ax6 = plt.subplot(212)
     plt.ylim(-3,100)
     plt.xlim(start_date-timedelta(hours=12),start_date+timedelta(days=length_date)-timedelta(hours=12))
-    plt.setp(ax6.xaxis.set_minor_locator(MultipleLocator(1)))
+    ax6.xaxis.set_minor_locator(MultipleLocator(1))
     plt.xlabel("Date",weight='bold',fontsize=8)
     plt.setp(ax6.get_xticklabels(), fontsize=8)
-    plt.setp(ax6.xaxis.set_major_formatter(mdates.DateFormatter('%d %b')))
+    ax6.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
     plt.ylabel('A-Index',fontsize=8,weight='bold')
     plt.setp(ax6.get_yticklabels(), visible=True, fontsize=8)
     plt.grid(b=True, which='major', color='c', linestyle='-', linewidth=0.1)
@@ -128,7 +128,6 @@ def plot_baseline(filebaseline,filexml,tahun):
     font = {'color':  'black',
             'size': 6,
             'ha':'center',
-            'va': 'top'
             }
     
     #Read baseline file
@@ -223,6 +222,7 @@ def plot_baseline(filebaseline,filexml,tahun):
             axs[2].text(mu, f((mdates.date2num(dates[k])-mu).mean()), poly2latex(coeffs), fontdict=font)
             
     fig.savefig('baseline.png',dpi=150,bbox_inches='tight')
+    plt.close()
     
 def plot_sinyal(pathIAGA):
     with open('station.ini') as f_init:
@@ -275,13 +275,11 @@ def plot_sinyal(pathIAGA):
                     Bz[i+(1440*tanggal_data)] = float(data[5])
                 else:
                     Bz[i+(1440*tanggal_data)] = np.nan
-                if data[6]!='99999.00':
-                    Bf[i+(1440*tanggal_data)] = float(data[6])
-                else:
-                    Bf[i+(1440*tanggal_data)] = np.nan
+                
                 Bx[i+(1440*tanggal_data)] = Bh[i+(1440*tanggal_data)]*np.cos(np.deg2rad(Bd[i+(1440*tanggal_data)]/60))
                 By[i+(1440*tanggal_data)] = Bh[i+(1440*tanggal_data)]*np.sin(np.deg2rad(Bd[i+(1440*tanggal_data)]/60))
                 Bi[i+(1440*tanggal_data)] = np.rad2deg(np.arctan(Bz[i+(1440*tanggal_data)]/Bh[i+(1440*tanggal_data)]))
+                Bf[i+(1440*tanggal_data)] = np.sqrt(Bx[i+(1440*tanggal_data)]**2+By[i+(1440*tanggal_data)]**2+Bz[i+(1440*tanggal_data)]**2)
     
     "READ K INDEX"
     with open(pathIMFV + '\\data.dka') as f:
@@ -344,7 +342,7 @@ def plot_sinyal(pathIAGA):
     "PLOT Y"
     ax2 = plt.subplot(412, sharex=ax1)
     plt.plot(t, By, linewidth=0.3, color='k')
-    plt.setp(ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f')))
+    #plt.setp(ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f')))
     plt.setp(ax2.get_xticklabels(), visible=False)
     plt.setp(ax2.get_yticklabels(), fontsize=8)
     plt.ylabel('Y COMPONENT\n (nT)', fontsize=8)
@@ -355,7 +353,7 @@ def plot_sinyal(pathIAGA):
     "PLOT Z"
     ax3 = plt.subplot(413, sharex=ax1)
     plt.plot(t, Bz, linewidth=0.3, color='k')
-    plt.setp(ax3.yaxis.set_major_formatter(FormatStrFormatter('%.2f')))
+    #plt.setp(ax3.yaxis.set_major_formatter(FormatStrFormatter('%.2f')))
     plt.setp(ax3.get_xticklabels(), visible=False)
     plt.setp(ax3.get_yticklabels(), fontsize=8)
     plt.ylabel('Z COMPONENT\n (nT)', fontsize=8)
