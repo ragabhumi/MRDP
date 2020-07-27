@@ -351,17 +351,17 @@ def format_excel(x_mean,y_mean,z_mean,f_mean,h_mean,d_mean,i_mean,IAGA_folder):
                 elif (k_i[m+((index_kk)*8)]==1):
                     a_i[m+((index_kk)*8)]=3
                 elif (k_i[m+((index_kk)*8)]==2):
-                    a_i[m+((index_kk)*8)]=7	
+                    a_i[m+((index_kk)*8)]=6	
                 elif (k_i[m+((index_kk)*8)]==3):
-                    a_i[m+((index_kk)*8)]=15	
+                    a_i[m+((index_kk)*8)]=12	
                 elif (k_i[m+((index_kk)*8)]==4):
-                    a_i[m+((index_kk)*8)]=27	
+                    a_i[m+((index_kk)*8)]=24	
                 elif (k_i[m+((index_kk)*8)]==5):
-                    a_i[m+((index_kk)*8)]=48	
+                    a_i[m+((index_kk)*8)]=40	
                 elif (k_i[m+((index_kk)*8)]==6):
-                    a_i[m+((index_kk)*8)]=80
+                    a_i[m+((index_kk)*8)]=70
                 elif (k_i[m+((index_kk)*8)]==7):
-                    a_i[m+((index_kk)*8)]=140	    
+                    a_i[m+((index_kk)*8)]=120	    
                 elif (k_i[m+((index_kk)*8)]==8):
                     a_i[m+((index_kk)*8)]=200	    
                 elif (k_i[m+((index_kk)*8)]==9):
